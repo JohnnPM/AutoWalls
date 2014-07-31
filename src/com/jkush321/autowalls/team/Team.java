@@ -9,6 +9,7 @@ package com.jkush321.autowalls.team;
 
 import java.util.ArrayList;
 
+import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
 /**
@@ -28,7 +29,7 @@ public class Team {
 
 	private ArrayList<Player> players = new ArrayList<Player>();
 	
-	public Team() {
+	public Team(String name, ChatColor color) {
 		
 	}
 

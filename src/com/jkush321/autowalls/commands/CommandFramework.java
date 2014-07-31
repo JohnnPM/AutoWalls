@@ -196,14 +196,7 @@ public class CommandFramework {
 						registerCommands(c.newInstance());
 					}
 				}
-			} catch (InstantiationException e) {
-				plugin.getLogger().log(
-						Level.INFO,
-						c.getSimpleName()
-								+ " does not use the default constructor");
-
-				e.printStackTrace();
-			} catch (IllegalAccessException e) {
+			} catch (InstantiationException | IllegalAccessException e) {
 				plugin.getLogger().log(
 						Level.INFO,
 						c.getSimpleName()

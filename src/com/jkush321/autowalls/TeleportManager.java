@@ -68,7 +68,7 @@ public class TeleportManager {
 				}
 			};
 		};
-		Bukkit.getScheduler().scheduleSyncDelayedTask(AutoWalls.plugin, runnable, AutoWalls.secondsBeforeTeleport * 20);
+		Bukkit.getScheduler().scheduleSyncDelayedTask(AutoWalls.get(), runnable, AutoWalls.secondsBeforeTeleport * 20);
 		runnableOwnership.put(runnable, p);
 		if (runnables.containsKey(p)) runnables.remove(p);
 		runnables.put(p, runnable);

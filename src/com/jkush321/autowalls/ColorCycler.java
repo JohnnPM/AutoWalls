@@ -7,7 +7,6 @@ import java.util.Set;
 
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
-import org.kitteh.tag.TagAPI;
 
 public class ColorCycler {
 	public static int MAX_COLOR_TIME;
@@ -24,7 +23,6 @@ public class ColorCycler {
 	{
 		if (fakeColors.containsKey(p)) fakeColors.remove(p);
 		fakeColors.put(p, c);
-		TagAPI.refreshPlayer(p);
 	}
 	public static void cycle(Player p)
 	{
@@ -120,7 +118,6 @@ public class ColorCycler {
 						{
 							fakeColors.remove(p);
 							p.sendMessage(ChatColor.RED + "Your ability to change color has worn off!");
-							TagAPI.refreshPlayer(p);
 						}
 					}
 					else
