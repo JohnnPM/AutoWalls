@@ -32,12 +32,12 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.logging.Logger;
 
-import org.bukkit.block.Block;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.block.Block;
 import org.bukkit.block.Sign;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -66,8 +66,8 @@ import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerLoginEvent;
-import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerLoginEvent.Result;
+import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerPickupItemEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
@@ -77,16 +77,26 @@ import org.bukkit.event.server.ServerListPingEvent;
 import org.bukkit.event.weather.WeatherChangeEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.metadata.FixedMetadataValue;
-import org.bukkit.plugin.Plugin;
+import org.bukkit.metadata.Metadatable;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import com.jkush321.autowalls.commands.CommandFramework;
+import com.jkush321.autowalls.handlers.GameHandler;
 import com.jkush321.autowalls.kits.Kit;
 import com.jkush321.autowalls.kits.KitManager;
 
-public class AutoWalls extends JavaPlugin implements Listener {
-
-	public static Plugin plugin = Bukkit.getPluginManager().getPlugin("AutoWalls");
-	public static final Logger logger = Logger.getLogger("Minecraft");
+public class AutoWalls extends JavaPlugin implements Listener 
+{
+	private static AutoWalls plugin;
+	public static AutoWalls get() 
+	{
+		return plugin;
+	}
+	
+	private CommandFramework framework;
+	private GameHandler handler;
+	
+	public final Logger logger = Logger.getLogger("Minecraft");
 	public static List<Player> playing = new CopyOnWriteArrayList<Player>();
 	public static List<Player> redTeam = new CopyOnWriteArrayList<Player>();
 	public static List<Player> blueTeam = new CopyOnWriteArrayList<Player>();
@@ -131,11 +141,24 @@ public class AutoWalls extends JavaPlugin implements Listener {
 	public static boolean useTabApi;
 	public static ArrayList<String> dead = new ArrayList<String>();
 
+	@Override
+	public void onLoad() 
+	{
+		framework = new CommandFramework(this);
+		plugin = this;
+		handler = new GameHandler(this);
+	}
+	
+	@Override
 	public void onEnable()
 	{
-		plugin = this;
+		if(plugin == null) plugin = this;
 		
-		getServer().getPluginManager().registerEvents(this, this);
+		framework.registerCommands();
+		framework.registerHelp();
+		
+		handler.registerEvents();
+		
 		config = getConfig();
 		
 		config.addDefault("votes.players.jkush321", 500);
@@ -290,21 +313,23 @@ public class AutoWalls extends JavaPlugin implements Listener {
 		dropper.stop();
 	}
 	
-	public boolean onCommand(CommandSender cmdSender, Command cmd, String cmdString, String[] args)
+	@Override
+	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args)
 	{
+		//return framework.handleCommand(sender, label, cmd, args);
 		if (gameOver) return true;
 		if (cmd.getLabel().equalsIgnoreCase("join"))
 		{
-			if (cmdSender instanceof Player)
+			if (sender instanceof Player)
 			{
-				Player p = (Player) cmdSender;
+				Player p = (Player) sender;
 				boolean allowed = false;
 				if (config.getInt("votes.players." + p.getName()) >= earlyJoinPriority && !gameInProgress) { allowed = true; }
 				if (canJoin && !gameInProgress){ allowed = true; }
 				if (playing.size()<teamSize*4 && config.getInt("votes.players." + p.getName()) >= lateJoinPriority && WallDropper.time > 0) { allowed = true; }
 				if (!allowed)
 				{
-					cmdSender.sendMessage(ChatColor.DARK_RED + "You can not join the game at this time!");
+					sender.sendMessage(ChatColor.DARK_RED + "You can not join the game at this time!");
 					return true;
 				}
 				if (args.length == 0) // Add to random team
@@ -333,56 +358,56 @@ public class AutoWalls extends JavaPlugin implements Listener {
 				}
 				else p.sendMessage(ChatColor.RED + "Too Many Arguments. /join <red|blue|green|orange>");
 			}
-			else cmdSender.sendMessage("You can't join a team, console :P");
+			else sender.sendMessage("You can't join a team, console :P");
 			return true;
 		}
 		else if (cmd.getLabel().equalsIgnoreCase("leave"))
 		{
-			if (cmdSender instanceof Player)
+			if (sender instanceof Player)
 			{
-				if (playing.contains((Player) cmdSender)){
-					Bukkit.broadcastMessage(ChatColor.YELLOW + cmdSender.getName() + ChatColor.DARK_RED + " has left the game!");
-					((Player) cmdSender).setHealth(0);
-					leaveTeam((Player) cmdSender);
+				if (playing.contains((Player) sender)){
+					Bukkit.broadcastMessage(ChatColor.YELLOW + sender.getName() + ChatColor.DARK_RED + " has left the game!");
+					((Player) sender).setHealth(0);
+					leaveTeam((Player) sender);
 				}
-				else cmdSender.sendMessage(ChatColor.DARK_RED + "You aren't on a team");
+				else sender.sendMessage(ChatColor.DARK_RED + "You aren't on a team");
 			}
 			return true;
 		}
 		else if (cmd.getLabel().equalsIgnoreCase("playing"))
 		{
-			if (!(cmdSender instanceof Player)) {
+			if (!(sender instanceof Player)) {
 				//If sent from console do...
 				
-				cmdSender.sendMessage(ChatColor.GRAY + "There are " + playing.size() + " people playing");
+				sender.sendMessage(ChatColor.GRAY + "There are " + playing.size() + " people playing");
 				String s = (ChatColor.GRAY + "Red: " + ChatColor.WHITE);
 				for (Player pl : redTeam)
 				{
 					s+=pl.getName() + ", ";
 				}
-				cmdSender.sendMessage(s.substring(0,s.length()-2));
+				sender.sendMessage(s.substring(0,s.length()-2));
 				s=(ChatColor.GRAY + "Blue: " + ChatColor.WHITE);
 				for (Player pl : blueTeam)
 				{
 					s+=pl.getName() + ", ";
 				}
-				cmdSender.sendMessage(s.substring(0,s.length()-2));
+				sender.sendMessage(s.substring(0,s.length()-2));
 				s=(ChatColor.GRAY + "Green: " + ChatColor.WHITE);
 				for (Player pl : greenTeam)
 				{
 					s+=pl.getName() + ", ";
 				}
-				cmdSender.sendMessage(s.substring(0,s.length()-2));
+				sender.sendMessage(s.substring(0,s.length()-2));
 				s=(ChatColor.GRAY + "Orange: " + ChatColor.WHITE);
 				for (Player pl : orangeTeam)
 				{
 					s+=pl.getName() + ", ";
 				}
-				cmdSender.sendMessage(s.substring(0,s.length()-2));
+				sender.sendMessage(s.substring(0,s.length()-2));
 				return true;
 				
 			} else {
-			Player p = (Player) cmdSender;
+			Player p = (Player) sender;
 			p.sendMessage(ChatColor.GRAY + "There are " + playing.size() + " people playing");
 			String s = (ChatColor.GRAY + "Red: " + ChatColor.WHITE);
 			for (Player pl : redTeam)
@@ -417,18 +442,18 @@ public class AutoWalls extends JavaPlugin implements Listener {
 			int seconds = 0;
 			if (!gameInProgress)
 			{
-				cmdSender.sendMessage(ChatColor.GRAY + "The game hasn't started yet!"); return true;
+				sender.sendMessage(ChatColor.GRAY + "The game hasn't started yet!"); return true;
 			}
 			minutes = WallDropper.time / 60;
 			seconds = WallDropper.time % 60;
 			
-			if (minutes==0 && seconds==0) {cmdSender.sendMessage(ChatColor.GRAY + "The Walls Already Dropped!"); return true;}
-			cmdSender.sendMessage(ChatColor.GRAY + "The walls will drop in " + minutes + " minutes and " + seconds + " seconds!");
+			if (minutes==0 && seconds==0) {sender.sendMessage(ChatColor.GRAY + "The Walls Already Dropped!"); return true;}
+			sender.sendMessage(ChatColor.GRAY + "The walls will drop in " + minutes + " minutes and " + seconds + " seconds!");
 			return true;
 		}
 		else if (cmd.getLabel().equalsIgnoreCase("team"))
 		{
-			Player p = (Player) cmdSender;
+			Player p = (Player) sender;
 			if (!playing.contains(p))
 			{
 				p.sendMessage(ChatColor.YELLOW + "You are not in game and have no team!"); return true;
@@ -478,7 +503,7 @@ public class AutoWalls extends JavaPlugin implements Listener {
 		{
 			if (args.length == 1)
 			{
-				Player p = (Player) cmdSender;
+				Player p = (Player) sender;
 				Player p2 = Bukkit.getPlayer(args[0]);
 				if (p2!=null && p2.isOnline())
 				{
@@ -519,22 +544,22 @@ public class AutoWalls extends JavaPlugin implements Listener {
 						z = Double.parseDouble(args[3]);
 					}catch (Exception e)
 					{
-						cmdSender.sendMessage(ChatColor.DARK_RED + "Invalid coordinates");
+						sender.sendMessage(ChatColor.DARK_RED + "Invalid coordinates");
 						return true;
 					}
 					p.teleport(new Location(p.getWorld(), x, y, z));
 				}
 				else
-					cmdSender.sendMessage(ChatColor.DARK_RED + "Player not found.");
+					sender.sendMessage(ChatColor.DARK_RED + "Player not found.");
 			}
-			else cmdSender.sendMessage("Invalid Arguments. /tp playername");
+			else sender.sendMessage("Invalid Arguments. /tp playername");
 			
 			return true;
 		}
 		else if (cmd.getLabel().equalsIgnoreCase("pri"))
 		{
 			if (args.length!=2 && args.length!=3) return false;
-			if (!cmdSender.hasPermission("walls.op")) return false;
+			if (!sender.hasPermission("walls.op")) return false;
 			Player pl = Bukkit.getPlayer(args[0]);
 			int a = Integer.parseInt(args[1]);
 			if (config.isSet("votes.players." + pl.getName()))
@@ -545,7 +570,7 @@ public class AutoWalls extends JavaPlugin implements Listener {
 			if (Bukkit.getPlayer(pl.getName()) != null && Bukkit.getPlayer(pl.getName()).isOnline()) Bukkit.getPlayer(pl.getName()).sendMessage(ChatColor.YELLOW + "Your priority is now " + config.getInt("votes.players." + pl.getName()));
 			if (args.length==3) Bukkit.broadcastMessage(ChatColor.AQUA + pl.getName() + " Donated To Us And Now Has Login Priority of " + config.getInt("votes.players." + pl.getName()) + "! :D Thank you very much, " + pl.getName());
 			saveConfig();
-			if (!pl.isOnline()) { cmdSender.sendMessage("Done!"); return true; }
+			if (!pl.isOnline()) { sender.sendMessage("Done!"); return true; }
 			pl.setDisplayName(pl.getName());
 			if (config.isSet("votes.players." + pl.getName()) && config.getInt("votes.players." + pl.getName()) >= 20) { pl.setDisplayName(ChatColor.DARK_AQUA + pl.getName() + ChatColor.WHITE); }
 			if (config.isSet("votes.players." + pl.getName()) && config.getInt("votes.players." + pl.getName()) >= 250) { pl.setDisplayName(ChatColor.DARK_RED + pl.getName() + ChatColor.WHITE); }
@@ -558,49 +583,49 @@ public class AutoWalls extends JavaPlugin implements Listener {
 		}
 		else if (cmd.getLabel().equalsIgnoreCase("tpplayers"))
 		{
-			if (!cmdSender.hasPermission("walls.op")) return false;
+			if (!sender.hasPermission("walls.op")) return false;
 			for (Player p : playing)
 			{
-				if (p!=(Player)cmdSender)
-					p.teleport((Player)cmdSender);
+				if (p!=(Player)sender)
+					p.teleport((Player)sender);
 			}
 			return true;
 		}
 		else if (cmd.getLabel().equalsIgnoreCase("tpspecs"))
 		{
-			if (!cmdSender.hasPermission("walls.op")) return false;
+			if (!sender.hasPermission("walls.op")) return false;
 			for (Player p : Bukkit.getOnlinePlayers())
 			{
-				if (!playing.contains(p) && p!=(Player)cmdSender)
-					p.teleport((Player)cmdSender);
+				if (!playing.contains(p) && p!=(Player)sender)
+					p.teleport((Player)sender);
 			}
 			return true;
 		}
 		else if (cmd.getLabel().equalsIgnoreCase("tpall"))
 		{
-			if (!cmdSender.hasPermission("walls.op")) return false;
+			if (!sender.hasPermission("walls.op")) return false;
 			for (Player p : Bukkit.getOnlinePlayers())
 			{
-				if (p!=(Player)cmdSender)
-					p.teleport((Player)cmdSender);
+				if (p!=(Player)sender)
+					p.teleport((Player)sender);
 			}
 			return true;
 		}
 		else if (cmd.getLabel().equalsIgnoreCase("tphere"))
 		{
-			if (!cmdSender.hasPermission("walls.op")) return false;
-			if (args.length!=1) { cmdSender.sendMessage(ChatColor.RED + "Invalid arguments"); return true; }
+			if (!sender.hasPermission("walls.op")) return false;
+			if (args.length!=1) { sender.sendMessage(ChatColor.RED + "Invalid arguments"); return true; }
 			Player pl = Bukkit.getPlayer(args[0]);
 			if (pl!=null && pl.isOnline())
 			{
-				pl.teleport((Player)cmdSender);
+				pl.teleport((Player)sender);
 			}
-			else cmdSender.sendMessage(ChatColor.RED + "Player is not online");
+			else sender.sendMessage(ChatColor.RED + "Player is not online");
 			return true;
 		}
 		else if (cmd.getLabel().equalsIgnoreCase("tc"))
 		{
-			Player p = (Player) cmdSender;
+			Player p = (Player) sender;
 			if (!playing.contains(p)) { p.sendMessage(ChatColor.RED + "You have to be on a team to teamchat!"); return true; }
 			if (!TeamChat.teamChatting.contains(p)) { TeamChat.teamChatting.add(p); p.sendMessage(ChatColor.YELLOW + "You are now team chatting!"); return true;}
 			if (TeamChat.teamChatting.contains(p)) { TeamChat.teamChatting.remove(p); p.sendMessage(ChatColor.YELLOW + "You have disabled team chatting!"); return true; }
@@ -608,10 +633,10 @@ public class AutoWalls extends JavaPlugin implements Listener {
 		}
 		else if (cmd.getLabel().equalsIgnoreCase("tell") || cmd.getLabel().equalsIgnoreCase("t"))
 		{
-			if (cmdSender instanceof Player)
+			if (sender instanceof Player)
 			{
-				Player p = (Player) cmdSender;
-				if (args.length < 2) { cmdSender.sendMessage(ChatColor.GRAY + "Invalid arguments... /tell [name] [message]"); return true; }
+				Player p = (Player) sender;
+				if (args.length < 2) { sender.sendMessage(ChatColor.GRAY + "Invalid arguments... /tell [name] [message]"); return true; }
 				String msg="";
 				boolean first = true;
 				for (String s : args)
@@ -628,7 +653,7 @@ public class AutoWalls extends JavaPlugin implements Listener {
 			}
 			else
 			{
-				if (args.length < 2) { cmdSender.sendMessage(ChatColor.GRAY + "Invalid arguments... /tell [name] [message]"); return true; }
+				if (args.length < 2) { sender.sendMessage(ChatColor.GRAY + "Invalid arguments... /tell [name] [message]"); return true; }
 				String msg="";
 				boolean first = true;
 				for (String s : args)
@@ -639,15 +664,15 @@ public class AutoWalls extends JavaPlugin implements Listener {
 				}
 				msg=msg.trim();
 				Player who = Bukkit.getPlayer(args[0]);
-				if (!who.isOnline() || who==null) { cmdSender.sendMessage(ChatColor.DARK_RED + "Player not found"); return true;}
-					cmdSender.sendMessage(ChatColor.GRAY + "[Private] " + ChatColor.WHITE + msg); who.sendMessage(ChatColor.GRAY + "[Private] " + ChatColor.WHITE + msg);
+				if (!who.isOnline() || who==null) { sender.sendMessage(ChatColor.DARK_RED + "Player not found"); return true;}
+					sender.sendMessage(ChatColor.GRAY + "[Private] " + ChatColor.WHITE + msg); who.sendMessage(ChatColor.GRAY + "[Private] " + ChatColor.WHITE + msg);
 				return true;
 			}
 		}
 		else if (cmd.getLabel().equalsIgnoreCase("me"))
 		{
-			if (args.length == 0) { cmdSender.sendMessage(ChatColor.GRAY + "Invalid arguments... /me [message]"); return true; }
-			Player p = (Player) cmdSender;
+			if (args.length == 0) { sender.sendMessage(ChatColor.GRAY + "Invalid arguments... /me [message]"); return true; }
+			Player p = (Player) sender;
 			String msg = "";
 			for (String s : args)
 			{
@@ -665,7 +690,7 @@ public class AutoWalls extends JavaPlugin implements Listener {
 			}
 			else
 			{
-				cmdSender.sendMessage(ChatColor.GRAY + "There have to be at least 2 players, and the game can not be started yet, and the join timer must be over!");
+				sender.sendMessage(ChatColor.GRAY + "There have to be at least 2 players, and the game can not be started yet, and the join timer must be over!");
 			}
 			return true;
 		}
@@ -679,7 +704,7 @@ public class AutoWalls extends JavaPlugin implements Listener {
 		}
 		else if (cmd.getLabel().equalsIgnoreCase("yell"))
 		{
-			if (config.getInt("votes.players." + cmdSender.getName()) >= 20 || !(cmdSender instanceof Player) || cmdSender.hasPermission("walls.op"))
+			if (config.getInt("votes.players." + sender.getName()) >= 20 || !(sender instanceof Player) || sender.hasPermission("walls.op"))
 			{
 				String message = "";
 				for (String s : args)
@@ -687,14 +712,14 @@ public class AutoWalls extends JavaPlugin implements Listener {
 					message+=s + " ";
 				}
 				message=message.trim();
-				if (args.length != 0) { Bukkit.broadcastMessage(ChatColor.DARK_GREEN + "[Yell] " + ChatColor.AQUA + cmdSender.getName() + ": " + ChatColor.WHITE + message); }
-				else cmdSender.sendMessage(ChatColor.AQUA + "Usage... /yell [message]");
+				if (args.length != 0) { Bukkit.broadcastMessage(ChatColor.DARK_GREEN + "[Yell] " + ChatColor.AQUA + sender.getName() + ": " + ChatColor.WHITE + message); }
+				else sender.sendMessage(ChatColor.AQUA + "Usage... /yell [message]");
 			}
-			else cmdSender.sendMessage(ChatColor.AQUA + "You need at least 20 priority to do that.");
+			else sender.sendMessage(ChatColor.AQUA + "You need at least 20 priority to do that.");
 		}
 		else if (cmd.getLabel().equalsIgnoreCase("forcedrop"))
 		{
-			if (WallDropper.time <= 5) { cmdSender.sendMessage(ChatColor.AQUA + "The walls have already dropped!"); }
+			if (WallDropper.time <= 5) { sender.sendMessage(ChatColor.AQUA + "The walls have already dropped!"); }
 			else { WallDropper.time = 5; }
 		}
 		else if (cmd.getLabel().equalsIgnoreCase("forceend"))
@@ -703,10 +728,10 @@ public class AutoWalls extends JavaPlugin implements Listener {
 		}
 		else if (cmd.getLabel().equalsIgnoreCase("fly"))
 		{
-			if (!gameInProgress) { cmdSender.sendMessage(ChatColor.RED + "The game did not start yet, no reason to fly"); return true; }
-			if (playing.contains((Player) cmdSender)) { cmdSender.sendMessage(ChatColor.RED + "You are in game! lol"); return true; }
-			((Player) cmdSender).setAllowFlight(true);
-			cmdSender.sendMessage(ChatColor.YELLOW + "You are now able to fly!");
+			if (!gameInProgress) { sender.sendMessage(ChatColor.RED + "The game did not start yet, no reason to fly"); return true; }
+			if (playing.contains((Player) sender)) { sender.sendMessage(ChatColor.RED + "You are in game! lol"); return true; }
+			((Player) sender).setAllowFlight(true);
+			sender.sendMessage(ChatColor.YELLOW + "You are now able to fly!");
 		}
 		else if (cmd.getLabel().equalsIgnoreCase("kit"))
 		{
@@ -717,26 +742,26 @@ public class AutoWalls extends JavaPlugin implements Listener {
 						Kit k = KitManager.findKit(args[0]);
 						int p = 0;
 						if (config
-								.isSet("votes.players." + cmdSender.getName()))
+								.isSet("votes.players." + sender.getName()))
 							p = config.getInt("votes.players."
-									+ cmdSender.getName());
+									+ sender.getName());
 						if (k.getRequiredPriority() <= p) {
-							KitManager.setKit((Player) cmdSender, k);
-							cmdSender.sendMessage(ChatColor.DARK_AQUA + "Selected kit "
+							KitManager.setKit((Player) sender, k);
+							sender.sendMessage(ChatColor.DARK_AQUA + "Selected kit "
 									+ k.getName());
 						} else {
-							cmdSender
+							sender
 									.sendMessage(ChatColor.DARK_RED + "That kit is not available to you! You can get " + priorityPerDollar + " priority for every $1 donated");
 						}
 					} else {
-						cmdSender.sendMessage(ChatColor.DARK_RED + "That kit was not found.");
+						sender.sendMessage(ChatColor.DARK_RED + "That kit was not found.");
 					}
 				} else
-					cmdSender.sendMessage(ChatColor.DARK_RED + "It is too late to choose a kit!");
+					sender.sendMessage(ChatColor.DARK_RED + "It is too late to choose a kit!");
 			} else if (args.length == 0) {
 					int p = 0;
-					if (config.isSet("votes.players." + cmdSender.getName()))
-						p = config.getInt("votes.players." + cmdSender.getName());
+					if (config.isSet("votes.players." + sender.getName()))
+						p = config.getInt("votes.players." + sender.getName());
 					String m1 = (ChatColor.GRAY + "Available Kits: " + ChatColor.WHITE);
 					for (Kit k : KitManager.kitList)
 					{
@@ -751,13 +776,13 @@ public class AutoWalls extends JavaPlugin implements Listener {
 					}
 					m1 = m1.substring(0, m1.length()-2) + ".";
 					m2 = m2.substring(0, m2.length()-2) + ".";
-					cmdSender.sendMessage(m1);
-					cmdSender.sendMessage(m2);
-					cmdSender.sendMessage(ChatColor.DARK_AQUA + "To unlock the unavaible kits you can donate for priority. You get " + priorityPerDollar + " priority for $1");
+					sender.sendMessage(m1);
+					sender.sendMessage(m2);
+					sender.sendMessage(ChatColor.DARK_AQUA + "To unlock the unavaible kits you can donate for priority. You get " + priorityPerDollar + " priority for $1");
 				}
 				else
 				{
-					cmdSender.sendMessage(ChatColor.DARK_RED + "/kit [name]");
+					sender.sendMessage(ChatColor.DARK_RED + "/kit [name]");
 				}
 		}
 		else if (cmd.getLabel().equalsIgnoreCase("prefix"))
@@ -796,7 +821,7 @@ public class AutoWalls extends JavaPlugin implements Listener {
 				{
 					if (config.isSet("prefix." + Bukkit.getPlayer(playerName).getName())) Bukkit.getPlayer(playerName).setDisplayName(ChatColor.translateAlternateColorCodes('&', config.getString("prefix." + Bukkit.getPlayer(playerName).getName()).replace("{pri}", config.getInt("votes.players." + Bukkit.getPlayer(playerName).getName())+"") + Bukkit.getPlayer(playerName).getName() + ChatColor.WHITE));
 				}
-				cmdSender.sendMessage(ChatColor.YELLOW + "Set " + playerName + "'s prefix to " + ChatColor.WHITE + "\"" + fullPrefix + ChatColor.WHITE + "\"");
+				sender.sendMessage(ChatColor.YELLOW + "Set " + playerName + "'s prefix to " + ChatColor.WHITE + "\"" + fullPrefix + ChatColor.WHITE + "\"");
 			}
 		}
 		else return false;
@@ -1499,7 +1524,7 @@ public class AutoWalls extends JavaPlugin implements Listener {
 		{
 			if (playing.contains((Player) e.getEntity()) && disableHealing && WallDropper.time<=0) { 
 				Random r = new Random();
-				e.setAmount(r.nextInt( (20 - ((Player)e.getEntity()).getHealth()) / 2 )); 
+				e.setAmount(r.nextInt( (int) ((20 - ((Player)e.getEntity()).getHealth()) / 2) )); 
 			} 
 		}
 	}
@@ -1632,9 +1657,9 @@ public class AutoWalls extends JavaPlugin implements Listener {
 	@EventHandler
 	public void onProjLaunch(ProjectileLaunchEvent e)
 	{
-		if (e.getEntity().getShooter().hasMetadata("last-grenade"))
+		if (((Metadatable) e.getEntity().getShooter()).hasMetadata("last-grenade"))
 		{
-			e.getEntity().setMetadata("grenade-type", new FixedMetadataValue(this, e.getEntity().getShooter().getMetadata("last-grenade").get(0).asString()));
+			e.getEntity().setMetadata("grenade-type", new FixedMetadataValue(this, ((Metadatable) e.getEntity().getShooter()).getMetadata("last-grenade").get(0).asString()));
 		}
 	}
 	public static void addDeadPlayer(String name)
