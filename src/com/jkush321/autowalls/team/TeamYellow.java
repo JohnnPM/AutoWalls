@@ -7,6 +7,8 @@
  */
 package com.jkush321.autowalls.team;
 
+import org.bukkit.ChatColor;
+
 /**
  * Created: Jul 30, 2014 <br>
  * Time: 9:31:54 PM <br>
@@ -20,6 +22,10 @@ package com.jkush321.autowalls.team;
  * 
  * @author 598Johnn897
  */
-public class TeamYellow extends Team {
+public class TeamYellow extends Team implements ITeam {
+
+	public TeamYellow() {
+		super("Yellow", ChatColor.YELLOW);
+	}
 
 }

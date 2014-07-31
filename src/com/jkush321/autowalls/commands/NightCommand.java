@@ -7,7 +7,12 @@
  */
 package com.jkush321.autowalls.commands;
 
+import org.bukkit.Bukkit;
+
+import com.jkush321.autowalls.commands.CommandFramework.Command;
+import com.jkush321.autowalls.commands.CommandFramework.CommandArgs;
 import com.jkush321.autowalls.commands.CommandFramework.CommandListener;
+import com.jkush321.autowalls.util.ColorUtil;
 
 /**
  * Created: Jul 31, 2014 <br>
@@ -24,4 +29,33 @@ import com.jkush321.autowalls.commands.CommandFramework.CommandListener;
  */
 public class NightCommand implements CommandListener {
 
+	@Command(command = "night", permission = "walls.time.day", aliases = { "sunset" })
+	public void night(CommandArgs info) {
+		if (info.getArgs().length == 0) {
+			if (info.isPlayer())
+				info.getPlayer().getWorld().setTime(16000);
+			else
+				info.getSender().sendMessage(
+						ColorUtil.formatColors("<red>Usage: /day <world>"));
+		} else if (info.getArgs().length == 1) {
+			if (info.isPlayer())
+				try {
+					Bukkit.getWorld(info.getArgs()[0]).setTime(16000);
+				} catch (NullPointerException e) {
+					info.getPlayer().sendMessage(
+							ColorUtil.formatColors("<red>Invalid World!"));
+				}
+			else
+				try {
+					Bukkit.getWorld(info.getArgs()[0]).setTime(16000);
+				} catch (NullPointerException e) {
+					info.getPlayer().sendMessage(
+							ColorUtil.formatColors("<red>Invalid World!"));
+				}
+		} else if (info.getArgs().length > 1) {
+			info.getSender().sendMessage(
+					ColorUtil.formatColors("<red>Too many Arguments!"));
+		}
+	}
+	
 }

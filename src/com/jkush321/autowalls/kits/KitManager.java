@@ -35,8 +35,6 @@ import com.jkush321.autowalls.AutoWalls;
 public class KitManager {
 	public static Map<Player, Kit> assignedKits = new HashMap<Player, Kit>();
 	public static List<Kit> kitList = new ArrayList<Kit>();
-	
-	public static void fillKits()
 	{
 		kitList.add(new KitArcher());
 		kitList.add(new KitBuilder());
@@ -68,30 +66,32 @@ public class KitManager {
 		kitList.add(new KitWarrior2());
 		kitList.add(new KitWarrior3());
 	}
-	
-	public static void setKit(Player p, Kit k)
-	{
-		if (assignedKits.containsKey(p)) assignedKits.remove(p);
+
+	public static void setKit(Player p, Kit k) {
+		if (assignedKits.containsKey(p))
+			assignedKits.remove(p);
 		assignedKits.put(p, k);
 	}
+
 	/**
 	 * NOTE: Null if game in progress
 	 */
-	public static Kit getKit(Player p)
-	{
-		if (AutoWalls.gameInProgress) return null;
-		if (assignedKits.containsKey(p)) return assignedKits.get(p);
-		for (Kit k : kitList)
-		{
-			if (k.isDefault()) return k;
+	public static Kit getKit(Player p) {
+		if (AutoWalls.gameInProgress)
+			return null;
+		if (assignedKits.containsKey(p))
+			return assignedKits.get(p);
+		for (Kit k : kitList) {
+			if (k.isDefault())
+				return k;
 		}
 		return null;
 	}
-	public static Kit findKit(String s)
-	{
-		for (Kit k : kitList)
-		{
-			if (k.getName().equalsIgnoreCase(s)) return k;
+
+	public static Kit findKit(String s) {
+		for (Kit k : kitList) {
+			if (k.getName().equalsIgnoreCase(s))
+				return k;
 		}
 		return null;
 	}

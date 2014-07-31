@@ -675,6 +675,23 @@ public class CommandFramework {
 				return null;
 			}
 		}
+		
+		/**
+		 * Gets the final arguments after start int in string
+		 * 
+		 * @return final arguments in string
+		 */
+		public String getFinalArgs(int start) {
+			StringBuilder bldr = new StringBuilder();
+			String[] args = this.getArgs();
+			for (int i = start; i < args.length; i++) {
+				if (i != start) {
+					bldr.append(" ");
+				}
+				bldr.append(args[i]);
+			}
+			return bldr.toString();
+		}
 	}
 
 	/**

@@ -7,6 +7,8 @@
  */
 package com.jkush321.autowalls.commands;
 
+import com.jkush321.autowalls.commands.CommandFramework.Command;
+import com.jkush321.autowalls.commands.CommandFramework.CommandArgs;
 import com.jkush321.autowalls.commands.CommandFramework.CommandListener;
 
 /**
@@ -24,4 +26,8 @@ import com.jkush321.autowalls.commands.CommandFramework.CommandListener;
  */
 public class JoinCommand implements CommandListener {
 
+	@Command(command = "join", aliases = {"team"}, permission = "walls.player")
+	public void join(CommandArgs info) {
+		
+	}
 }
