@@ -74,7 +74,6 @@ import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.event.player.PlayerToggleSneakEvent;
 import org.bukkit.event.server.ServerListPingEvent;
-import org.bukkit.event.weather.WeatherChangeEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.metadata.Metadatable;
@@ -82,20 +81,34 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import com.jkush321.autowalls.commands.CommandFramework;
 import com.jkush321.autowalls.handlers.GameHandler;
+import com.jkush321.autowalls.handlers.TeamHandler;
 import com.jkush321.autowalls.kits.Kit;
 import com.jkush321.autowalls.kits.KitManager;
 
 public class AutoWalls extends JavaPlugin implements Listener {
+	
 	private static AutoWalls plugin;
-
 	public static AutoWalls get() {
 		return plugin;
 	}
 
 	private CommandFramework framework;
+	
 	private GameHandler handler;
-
-	public final Logger logger = Logger.getLogger("Minecraft");
+	public GameHandler getHandler() {
+		return handler;
+	}
+	
+	private TeamHandler teamHandler;
+	public TeamHandler getTeamHandler() {
+		return teamHandler;
+	}
+	
+	private Logger logger;
+	public Logger getAWLogger() {
+		return logger;
+	}
+	
 	public static List<Player> playing = new CopyOnWriteArrayList<Player>();
 	public static List<Player> redTeam = new CopyOnWriteArrayList<Player>();
 	public static List<Player> blueTeam = new CopyOnWriteArrayList<Player>();
@@ -142,9 +155,11 @@ public class AutoWalls extends JavaPlugin implements Listener {
 
 	@Override
 	public void onLoad() {
-		framework = new CommandFramework(this);
 		plugin = this;
+		framework = new CommandFramework(this);
 		handler = new GameHandler(this);
+		teamHandler = new TeamHandler(this);
+		logger = Logger.getLogger("AutoWalls");
 	}
 
 	@Override
@@ -156,7 +171,8 @@ public class AutoWalls extends JavaPlugin implements Listener {
 		framework.registerHelp();
 
 		handler.registerEvents();
-
+		teamHandler.registerTeams();
+		
 		config = getConfig();
 
 		config.addDefault("votes.players.jkush321", 500);
@@ -290,7 +306,6 @@ public class AutoWalls extends JavaPlugin implements Listener {
 		}, 0L, 20L);
 
 		Grenades.init();
-		KitManager.fillKits();
 
 		if (Bukkit.getPluginManager().getPlugin("TabAPI") != null) {
 			useTabApi = true;
@@ -1811,11 +1826,6 @@ public class AutoWalls extends JavaPlugin implements Listener {
 			message = ChatColor.DARK_AQUA + "Voting for the next map!";
 		}
 		e.setMotd(message);
-	}
-
-	@EventHandler
-	public void onWeather(WeatherChangeEvent e) {
-		e.setCancelled(true);
 	}
 
 	@EventHandler

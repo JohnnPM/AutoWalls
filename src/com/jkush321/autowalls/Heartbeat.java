@@ -28,27 +28,35 @@ import java.io.InputStreamReader;
 import java.net.URL;
 
 import org.bukkit.Bukkit;
+
 public class Heartbeat implements Runnable {
-	public void run()
-	{
-		while (true)
-		{
-			try{
-				
-				URL url = new URL("http://infacraft.net/autowalls/hb.php?port=" + Bukkit.getPort() + "&online=" + Bukkit.getOnlinePlayers().length + "&max=" + Bukkit.getMaxPlayers() + "&teamsize=" + AutoWalls.teamSize + "&version=" + AutoWalls.version);
-				BufferedReader br = new BufferedReader(new InputStreamReader(url.openConnection().getInputStream()));
+	public void run() {
+		while (true) {
+			try {
+
+				URL url = new URL("http://infacraft.net/autowalls/hb.php?port="
+						+ Bukkit.getPort() + "&online="
+						+ Bukkit.getOnlinePlayers().length + "&max="
+						+ Bukkit.getMaxPlayers() + "&teamsize="
+						+ AutoWalls.teamSize + "&version=" + AutoWalls.version);
+				BufferedReader br = new BufferedReader(new InputStreamReader(
+						url.openConnection().getInputStream()));
 				String s = "";
 				String response = "";
-				while ((s=br.readLine()) != null)
-				{
-					response+=s;
+				while ((s = br.readLine()) != null) {
+					response += s;
 				}
-				
-				if (!response.trim().equals("Done.")) System.out.println("Abnormal: Heartbeat returned " + response);
-				
+
+				if (!response.trim().equals("Done."))
+					System.out.println("Abnormal: Heartbeat returned "
+							+ response);
+
 				Thread.sleep(60000);
-				
-			}catch (Exception e) { System.out.println("Heartbeat error!"); e.printStackTrace(); }
+
+			} catch (Exception e) {
+				System.out.println("Heartbeat error!");
+				e.printStackTrace();
+			}
 		}
 	}
 }

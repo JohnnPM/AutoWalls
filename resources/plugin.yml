@@ -1,6 +1,7 @@
 name: AutoWalls
 main: com.jkush321.autowalls.AutoWalls
-version: 1.0
+version: 2.0.0-BETA
+authors: [jkush321, Johnn, Not2EXceL, minnymin3]
 commands:
   join:
     description: Joins a team

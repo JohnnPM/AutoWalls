@@ -7,6 +7,8 @@
  */
 package com.jkush321.autowalls.lib;
 
+import com.jkush321.autowalls.AutoWalls;
+
 /**
  * Created: Jul 30, 2014 <br>
  * Time: 9:52:14 PM <br>
@@ -21,5 +23,10 @@ package com.jkush321.autowalls.lib;
  * @author 598Johnn897
  */
 public class References {
+	
+	private static AutoWalls plugin = AutoWalls.get();
+	
+	public static final String NAME = plugin.getDescription().getName();
+	public static final String VERSION = plugin.getDescription().getVersion();
 
 }

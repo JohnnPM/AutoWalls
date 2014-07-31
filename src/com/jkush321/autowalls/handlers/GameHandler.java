@@ -10,7 +10,9 @@ package com.jkush321.autowalls.handlers;
 import java.util.logging.Level;
 
 import org.bukkit.Bukkit;
+import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.weather.WeatherChangeEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import com.jkush321.autowalls.AutoWalls;
@@ -32,14 +34,33 @@ import com.jkush321.autowalls.commands.CommandFramework.ClassEnumerator;
  * 
  * @author 598Johnn897
  */
-public class GameHandler {
+public class GameHandler implements Listener {
 
 	private AutoWalls plugin;
 
+	public boolean gameInProgress = false;
+	
 	public GameHandler(AutoWalls autoWalls) {
 		this.plugin = autoWalls;
 	}
 
+	/**
+	 * @return if game is in progress
+	 */
+	public boolean isGameInProgress() {
+		return gameInProgress;
+	}
+	
+	/**
+	 * Gets rid of the rain
+	 * 
+	 * @param e
+	 */
+	@EventHandler
+	public void onWeather(WeatherChangeEvent e) {
+		e.setCancelled(true);
+	}
+	
 	/**
 	 * Dynamically registers all listeners/events in project.
 	 */
