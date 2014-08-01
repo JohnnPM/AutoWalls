@@ -1,6 +1,6 @@
 #AutoWalls
-##The best plugin for running The Walls maps on dedicated The Walls servers
-- - -
+The best plugin for running The Walls maps on dedicated The Walls servers
+---
 ### License
 AutoWalls is licensed under a Creative Commons Attribution-NonCommercial 3.0 Unported License.
 You can modify it for your own network of servers but can not distribute your modifications.
