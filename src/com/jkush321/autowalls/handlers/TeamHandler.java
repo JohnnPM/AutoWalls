@@ -11,9 +11,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 
+import org.bukkit.entity.Player;
+
 import com.jkush321.autowalls.AutoWalls;
 import com.jkush321.autowalls.commands.CommandFramework.ClassEnumerator;
-import com.jkush321.autowalls.team.ITeam;
 import com.jkush321.autowalls.team.Team;
 
 /**
@@ -35,34 +36,34 @@ import com.jkush321.autowalls.team.Team;
 public class TeamHandler {
 
 	private AutoWalls plugin;
-
 	public TeamHandler(AutoWalls autoWalls) {
 		plugin = autoWalls;
 	}
 
 	public List<Team> teams = new ArrayList<Team>();
 
-	/**
-	 * Registers a team
-	 * 
-	 * @param team
-	 */
 	private void registerTeam(Team team) {
 		teams.add(team);
 	}
 
-	/**
-	 * Unregisters a team
-	 * 
-	 * @param team
-	 */
 	public void unregisterTeam(Team team) {
 		teams.remove(team);
 	}
-
-	/**
-	 * Registers all Teams
-	 */
+	
+	public ArrayList<Player> getPlayersOnTeam(Team team) {
+		return team.getPlayers();
+	}
+	
+	public ArrayList<Player> getPlayersOnTeams() {
+		ArrayList<Player> totalPlayers = new ArrayList<Player>();
+		for (Team t : teams) {
+			for(Player p : t.getPlayers()) {
+				totalPlayers.add(p);
+			}
+		}
+		return totalPlayers;
+	}
+	
 	public void registerTeams() {
 		Class<?>[] classes = ClassEnumerator.getInstance()
 				.getClassesFromThisJar(plugin);
@@ -72,7 +73,7 @@ public class TeamHandler {
 		plugin.getAWLogger().log(Level.INFO, "Starting registration of teams:");
 		for (Class<?> c : classes) {
 			try {
-				if (ITeam.class.isAssignableFrom(c) && !c.isInterface()
+				if (Team.class.isAssignableFrom(c) && !c.isInterface()
 						&& !c.isEnum() && !c.isAnnotation()) {
 					plugin.getLogger().log(Level.INFO,
 							"Searching class: " + c.getSimpleName());

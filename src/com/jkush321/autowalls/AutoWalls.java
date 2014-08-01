@@ -81,9 +81,9 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import com.jkush321.autowalls.commands.CommandFramework;
 import com.jkush321.autowalls.handlers.GameHandler;
+import com.jkush321.autowalls.handlers.KitHandler;
 import com.jkush321.autowalls.handlers.TeamHandler;
 import com.jkush321.autowalls.kits.Kit;
-import com.jkush321.autowalls.kits.KitManager;
 
 public class AutoWalls extends JavaPlugin implements Listener {
 	
@@ -307,9 +307,9 @@ public class AutoWalls extends JavaPlugin implements Listener {
 
 		Grenades.init();
 
-		if (Bukkit.getPluginManager().getPlugin("TabAPI") != null) {
+		if (Bukkit.getPluginManager().getPlugin("TabAPI") != null && useTabApi) {
 			useTabApi = true;
-			System.out.println("[AutoWalls] Successfully hooked into TagAPI!");
+			System.out.println("[AutoWalls] Successfully hooked into TabAPI!");
 		} else if (useTabApi) {
 			System.out
 					.println("[AutoWalls] Error! TabAPI is not installed but it was set to be used in the config!");
@@ -825,14 +825,14 @@ public class AutoWalls extends JavaPlugin implements Listener {
 			if (args.length == 1) {
 				if (JoinTimer.timeleft > 0 || !gameInProgress) {
 
-					if (KitManager.findKit(args[0]) != null) {
-						Kit k = KitManager.findKit(args[0]);
+					if (KitHandler.findKit(args[0]) != null) {
+						Kit k = KitHandler.findKit(args[0]);
 						int p = 0;
 						if (config.isSet("votes.players." + sender.getName()))
 							p = config.getInt("votes.players."
 									+ sender.getName());
 						if (k.getRequiredPriority() <= p) {
-							KitManager.setKit((Player) sender, k);
+							KitHandler.setKit((Player) sender, k);
 							sender.sendMessage(ChatColor.DARK_AQUA
 									+ "Selected kit " + k.getName());
 						} else {
@@ -853,13 +853,13 @@ public class AutoWalls extends JavaPlugin implements Listener {
 				if (config.isSet("votes.players." + sender.getName()))
 					p = config.getInt("votes.players." + sender.getName());
 				String m1 = (ChatColor.GRAY + "Available Kits: " + ChatColor.WHITE);
-				for (Kit k : KitManager.kitList) {
+				for (Kit k : KitHandler.kitList) {
 					if (k.getRequiredPriority() <= p)
 						m1 += "(" + k.getRequiredPriority() + ")" + k.getName()
 								+ ", ";
 				}
 				String m2 = (ChatColor.GRAY + "Unavailable Kits: " + ChatColor.WHITE);
-				for (Kit k : KitManager.kitList) {
+				for (Kit k : KitHandler.kitList) {
 					if (k.getRequiredPriority() > p)
 						m2 += "(" + k.getRequiredPriority() + ")" + k.getName()
 								+ ", ";
@@ -1067,8 +1067,8 @@ public class AutoWalls extends JavaPlugin implements Listener {
 			}
 		for (Player p : playing) {
 			p.sendMessage(ChatColor.YELLOW + "Good Luck!");
-			if (KitManager.getKit(p) != null) {
-				p.getInventory().addItem(KitManager.getKit(p).getItemStack());
+			if (KitHandler.getKit(p) != null) {
+				p.getInventory().addItem(KitHandler.getKit(p).getItemStack());
 			}
 		}
 		gameInProgress = true;

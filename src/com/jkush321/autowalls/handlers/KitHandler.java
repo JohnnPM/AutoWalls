@@ -21,7 +21,7 @@
  * 
  */
 
-package com.jkush321.autowalls.kits;
+package com.jkush321.autowalls.handlers;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -31,8 +31,38 @@ import java.util.Map;
 import org.bukkit.entity.Player;
 
 import com.jkush321.autowalls.AutoWalls;
+import com.jkush321.autowalls.kits.Kit;
+import com.jkush321.autowalls.kits.KitArcher;
+import com.jkush321.autowalls.kits.KitBuilder;
+import com.jkush321.autowalls.kits.KitBuilder2;
+import com.jkush321.autowalls.kits.KitCactus;
+import com.jkush321.autowalls.kits.KitDefault;
+import com.jkush321.autowalls.kits.KitDemo;
+import com.jkush321.autowalls.kits.KitElite;
+import com.jkush321.autowalls.kits.KitElite2;
+import com.jkush321.autowalls.kits.KitEnder;
+import com.jkush321.autowalls.kits.KitExcavator;
+import com.jkush321.autowalls.kits.KitFarmer;
+import com.jkush321.autowalls.kits.KitFirefighter;
+import com.jkush321.autowalls.kits.KitFood;
+import com.jkush321.autowalls.kits.KitFood2;
+import com.jkush321.autowalls.kits.KitGhost;
+import com.jkush321.autowalls.kits.KitGhost2;
+import com.jkush321.autowalls.kits.KitGhost3;
+import com.jkush321.autowalls.kits.KitMedic;
+import com.jkush321.autowalls.kits.KitMiner;
+import com.jkush321.autowalls.kits.KitParatrooper;
+import com.jkush321.autowalls.kits.KitPyro;
+import com.jkush321.autowalls.kits.KitPyro2;
+import com.jkush321.autowalls.kits.KitSmelter;
+import com.jkush321.autowalls.kits.KitSpy;
+import com.jkush321.autowalls.kits.KitTools;
+import com.jkush321.autowalls.kits.KitTrader;
+import com.jkush321.autowalls.kits.KitWarrior;
+import com.jkush321.autowalls.kits.KitWarrior2;
+import com.jkush321.autowalls.kits.KitWarrior3;
 
-public class KitManager {
+public class KitHandler {
 	public static Map<Player, Kit> assignedKits = new HashMap<Player, Kit>();
 	public static List<Kit> kitList = new ArrayList<Kit>();
 	{
