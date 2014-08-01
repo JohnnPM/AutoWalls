@@ -7,6 +7,8 @@
  */
 package com.jkush321.autowalls.team;
 
+import org.bukkit.ChatColor;
+
 /**
  * Created: Jul 31, 2014 <br>
  * Time: 7:24:10 PM <br>
@@ -21,5 +23,9 @@ package com.jkush321.autowalls.team;
  * @author 598Johnn897
  */
 public class TeamBlue extends Team {
+	
+	public TeamBlue() {
+		super("Blue", ChatColor.BLUE);
+	}
 
 }

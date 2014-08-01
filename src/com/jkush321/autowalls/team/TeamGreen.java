@@ -7,6 +7,8 @@
  */
 package com.jkush321.autowalls.team;
 
+import org.bukkit.ChatColor;
+
 /**
  * Created: Jul 31, 2014 <br>
  * Time: 7:24:41 PM <br>
@@ -22,4 +24,7 @@ package com.jkush321.autowalls.team;
  */
 public class TeamGreen extends Team {
 
+	public TeamGreen() {
+		super("Green", ChatColor.GREEN);
+	}
 }

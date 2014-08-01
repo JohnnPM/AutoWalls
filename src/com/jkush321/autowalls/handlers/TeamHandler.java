@@ -11,6 +11,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 
+import org.bukkit.entity.Player;
+
 import com.jkush321.autowalls.AutoWalls;
 import com.jkush321.autowalls.commands.CommandFramework.ClassEnumerator;
 import com.jkush321.autowalls.team.Team;
@@ -46,6 +48,20 @@ public class TeamHandler {
 
 	public void unregisterTeam(Team team) {
 		teams.remove(team);
+	}
+	
+	public ArrayList<Player> getPlayersOnTeam(Team team) {
+		return team.getPlayers();
+	}
+	
+	public ArrayList<Player> getPlayersOnTeams() {
+		ArrayList<Player> totalPlayers = new ArrayList<Player>();
+		for (Team t : teams) {
+			for(Player p : t.getPlayers()) {
+				totalPlayers.add(p);
+			}
+		}
+		return totalPlayers;
 	}
 	
 	public void registerTeams() {
