@@ -13,7 +13,6 @@ import java.util.logging.Level;
 
 import com.jkush321.autowalls.AutoWalls;
 import com.jkush321.autowalls.commands.CommandFramework.ClassEnumerator;
-import com.jkush321.autowalls.team.ITeam;
 import com.jkush321.autowalls.team.Team;
 
 /**
@@ -42,27 +41,14 @@ public class TeamHandler {
 
 	public List<Team> teams = new ArrayList<Team>();
 
-	/**
-	 * Registers a team
-	 * 
-	 * @param team
-	 */
 	private void registerTeam(Team team) {
 		teams.add(team);
 	}
 
-	/**
-	 * Unregisters a team
-	 * 
-	 * @param team
-	 */
 	public void unregisterTeam(Team team) {
 		teams.remove(team);
 	}
-
-	/**
-	 * Registers all Teams
-	 */
+	
 	public void registerTeams() {
 		Class<?>[] classes = ClassEnumerator.getInstance()
 				.getClassesFromThisJar(plugin);
@@ -72,7 +58,7 @@ public class TeamHandler {
 		plugin.getAWLogger().log(Level.INFO, "Starting registration of teams:");
 		for (Class<?> c : classes) {
 			try {
-				if (ITeam.class.isAssignableFrom(c) && !c.isInterface()
+				if (Team.class.isAssignableFrom(c) && !c.isInterface()
 						&& !c.isEnum() && !c.isAnnotation()) {
 					plugin.getLogger().log(Level.INFO,
 							"Searching class: " + c.getSimpleName());

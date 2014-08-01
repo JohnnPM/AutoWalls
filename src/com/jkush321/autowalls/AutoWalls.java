@@ -307,9 +307,9 @@ public class AutoWalls extends JavaPlugin implements Listener {
 
 		Grenades.init();
 
-		if (Bukkit.getPluginManager().getPlugin("TabAPI") != null) {
+		if (Bukkit.getPluginManager().getPlugin("TabAPI") != null && useTabApi) {
 			useTabApi = true;
-			System.out.println("[AutoWalls] Successfully hooked into TagAPI!");
+			System.out.println("[AutoWalls] Successfully hooked into TabAPI!");
 		} else if (useTabApi) {
 			System.out
 					.println("[AutoWalls] Error! TabAPI is not installed but it was set to be used in the config!");
