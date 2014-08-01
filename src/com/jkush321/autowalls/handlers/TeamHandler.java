@@ -34,7 +34,6 @@ import com.jkush321.autowalls.team.Team;
 public class TeamHandler {
 
 	private AutoWalls plugin;
-
 	public TeamHandler(AutoWalls autoWalls) {
 		plugin = autoWalls;
 	}
