@@ -7,7 +7,10 @@
  */
 package com.jkush321.autowalls.team;
 
+import java.util.ArrayList;
+
 import org.bukkit.ChatColor;
+import org.bukkit.entity.Player;
 
 /**
  * Created: Jul 31, 2014 <br>
@@ -26,6 +29,12 @@ public class TeamRed extends Team {
 	
 	public TeamRed() {
 		super("Red", ChatColor.RED);
+	}
+	
+	private ArrayList<Player> players = new ArrayList<Player>();
+
+	public ArrayList<Player> getPlayers() {
+		return players;
 	}
 
 }

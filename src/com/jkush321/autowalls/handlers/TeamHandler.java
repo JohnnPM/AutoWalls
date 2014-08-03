@@ -8,7 +8,7 @@
 package com.jkush321.autowalls.handlers;
 
 import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
 import java.util.logging.Level;
 
 import org.bukkit.entity.Player;
@@ -40,14 +40,64 @@ public class TeamHandler {
 		plugin = autoWalls;
 	}
 
-	public List<Team> teams = new ArrayList<Team>();
-
+	public HashMap<Team, ArrayList<Player>> teams = new HashMap<Team, ArrayList<Player>>();
+	public HashMap<Player, Team> playerPerTeam = new HashMap<Player, Team>();
+	/**
+	 * Team 1 <br>
+	 * Team 2 <br>
+	 * Team 3 <br>
+	 * Team 4 <br>
+	 * <p>
+	 * (duh? i dont know what colors it would be :/)
+	 */
+	public HashMap<Team, Integer> teamByInt = new HashMap<Team, Integer>();
+	public ArrayList<Team> teamList = new ArrayList<Team>();
+	public int maxTeamSize;
+	
 	private void registerTeam(Team team) {
-		teams.add(team);
+		teams.put(team, team.getPlayers());
+		teamList.add(team);
 	}
 
+	public void updateTeams() {
+		for (Team t : teamList) {
+			teams.remove(t);
+			teams.put(t, t.getPlayers());
+		}
+	}
+	
 	public void unregisterTeam(Team team) {
 		teams.remove(team);
+		teamList.remove(team);
+	}
+	
+	/**
+	 * Gets player's team else returns null
+	 * 
+	 * @return player's team
+	 */
+	public Team getPlayerTeam(Player player) {
+		try {
+			return playerPerTeam.get(player);
+		} catch (NullPointerException e) {
+			return null;
+		}
+	}
+	
+	public void addPlayerToTeam(Player player, Team team) {
+		playerPerTeam.put(player, team);
+	}
+	
+	/**
+	 * Removes player from the team he/her is on
+	 * 
+	 * @param player
+	 */
+	public void removePlayerFromTeam(Player player) {
+		try {
+			playerPerTeam.remove(player);
+		} catch (NullPointerException e) {
+		}
 	}
 	
 	public ArrayList<Player> getPlayersOnTeam(Team team) {
@@ -56,7 +106,7 @@ public class TeamHandler {
 	
 	public ArrayList<Player> getPlayersOnTeams() {
 		ArrayList<Player> totalPlayers = new ArrayList<Player>();
-		for (Team t : teams) {
+		for (Team t : teamList) {
 			for(Player p : t.getPlayers()) {
 				totalPlayers.add(p);
 			}

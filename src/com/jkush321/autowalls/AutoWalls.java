@@ -23,6 +23,7 @@
 
 package com.jkush321.autowalls;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -80,6 +81,7 @@ import org.bukkit.metadata.Metadatable;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import com.jkush321.autowalls.commands.CommandFramework;
+import com.jkush321.autowalls.config.Config;
 import com.jkush321.autowalls.handlers.GameHandler;
 import com.jkush321.autowalls.handlers.KitHandler;
 import com.jkush321.autowalls.handlers.TeamHandler;
@@ -109,49 +111,17 @@ public class AutoWalls extends JavaPlugin implements Listener {
 		return logger;
 	}
 	
-	public static List<Player> playing = new CopyOnWriteArrayList<Player>();
-	public static List<Player> redTeam = new CopyOnWriteArrayList<Player>();
-	public static List<Player> blueTeam = new CopyOnWriteArrayList<Player>();
-	public static List<Player> greenTeam = new CopyOnWriteArrayList<Player>();
-	public static List<Player> orangeTeam = new CopyOnWriteArrayList<Player>();
-	public static List<Player> votedFor1 = new ArrayList<Player>();
-	public static List<Player> votedFor2 = new ArrayList<Player>();
-	public static boolean gameInProgress = false;
-	public static boolean voting = false;
-	public static FileConfiguration config;
-	public static boolean gameOver = false;
-	public static int teamSize;
-	public static int[] redSpawn = new int[3];
-	public static int[] blueSpawn = new int[3];
-	public static int[] greenSpawn = new int[3];
-	public static int[] orangeSpawn = new int[3];
-	public static int mapNumber;
-	public static String announcerName;
-	public static Thread beat;
-	public static Thread announcer;
-	public static Thread dropper;
-	public static Thread joinTimer;
-	public static boolean mapVotes;
-	public static boolean blockSneaking;
-	public static boolean disableHealing;
-	public static boolean arrowLightning;
-	public static int arrowLightningChance;
-	public static boolean canJoin = false;
-	public static List<Sign> graves = new ArrayList<Sign>();
-	public static List<String> graveMessages;
-	public static String fullKickMessage;
-	public static String priorityKickMessage;
-	public static boolean teamTeleports;
-	public static String votelink = "";
-	public static int priorityPerDollar;
-	private static Map<Player, Long> lastEvent = new ConcurrentHashMap<>();
-	public static int secondsBeforeTeleport;
-	public final static String version = "1.1r1";
-	public static int earlyJoinPriority, lateJoinPriority;
-	public static boolean lateJoins;
-	public static boolean preventFireBeforeWallsFall;
-	public static boolean useTabApi;
-	public static ArrayList<String> dead = new ArrayList<String>();
+	private File configFile;
+	private Config config;
+
+	public Config getAWConfig() {
+		return config;
+	}
+	
+	private Announcer announcer;
+	public Announcer getAnnouncer() {
+		return announcer;
+	}
 
 	@Override
 	public void onLoad() {
@@ -160,6 +130,7 @@ public class AutoWalls extends JavaPlugin implements Listener {
 		handler = new GameHandler(this);
 		teamHandler = new TeamHandler(this);
 		logger = Logger.getLogger("AutoWalls");
+		announcer = new Announcer();
 	}
 
 	@Override
@@ -172,73 +143,16 @@ public class AutoWalls extends JavaPlugin implements Listener {
 
 		handler.registerEvents();
 		teamHandler.registerTeams();
+
+		File folder = getDataFolder();
+		if (!folder.exists())
+			folder.mkdir();
+
+		configFile = new File(folder, "config.txt");
+		if (!configFile.exists())
+			this.saveResource("config.txt", false);
+		config = new Config(configFile);
 		
-		config = getConfig();
-
-		config.addDefault("votes.players.jkush321", 500);
-		config.addDefault("votes.players.example_player", 2);
-		config.addDefault("priorities", true);
-		config.addDefault("team-size", 4);
-		config.addDefault("next-map", 1);
-		config.addDefault("announcer-name", "Announcer");
-		config.addDefault(
-				"announcements",
-				"Seperate Announements With SemiColons;You should have at least 2 messages;Your message here!");
-		config.addDefault("map-votes", true);
-		config.addDefault("prevent-sneaking-after-walls-fall", true);
-		config.addDefault("disable-healing-after-walls-fall", true);
-		config.addDefault("rare-lightning-strike-on-arrow-land", true);
-		config.addDefault("one-in-blank-chance-of-lightning", 250);
-		config.addDefault("seconds-before-can-join-team", 60);
-		config.addDefault("grave-messages", Arrays.asList("He was loved",
-				"Loved by many", "Will be missed", "Died young",
-				"In our hearts", "Has been lost", "All gone now",
-				"Will be mourned", "Had a good life", "Withered away"));
-		config.addDefault("full-server-message",
-				"The server is full and your priority is not high enough!");
-		config.addDefault("priority-kick-message",
-				"Someone with higher priority joined!");
-		config.addDefault("team-teleports", true);
-		config.addDefault("game-length-in-minutes", 15);
-		config.addDefault("vote-link", "my-vote-link.com");
-		config.addDefault("priority-per-dollar", 5);
-		config.addDefault("seconds-before-teleport", 3);
-		config.addDefault("early-join-priority", 1);
-		config.addDefault("late-join-priority", 25);
-		config.addDefault("late-joins", true);
-		config.addDefault("prevent-fire-before-walls-fall", true);
-		config.addDefault("max-color-cycler-time", 120);
-		config.addDefault("use-tab-api", true);
-
-		config.options().copyDefaults(true);
-		saveConfig();
-
-		announcerName = config.getString("announcer-name");
-		mapNumber = config.getInt("next-map");
-		mapVotes = config.getBoolean("map-votes");
-		blockSneaking = config.getBoolean("prevent-sneaking-after-walls-fall");
-		disableHealing = config.getBoolean("disable-healing-after-walls-fall");
-		arrowLightning = config
-				.getBoolean("rare-lightning-strike-on-arrow-land");
-		arrowLightningChance = config
-				.getInt("one-in-blank-chance-of-lightning");
-		graveMessages = config.getStringList("grave-messages");
-		fullKickMessage = config.getString("full-server-message");
-		priorityKickMessage = config.getString("priority-kick-message");
-		JoinTimer.timeleft = config.getInt("seconds-before-can-join-team");
-		teamTeleports = config.getBoolean("team-teleports");
-		WallDropper.time = config.getInt("game-length-in-minutes") * 60;
-		votelink = config.getString("vote-link");
-		priorityPerDollar = config.getInt("priority-per-dollar");
-		secondsBeforeTeleport = config.getInt("seconds-before-teleport");
-		earlyJoinPriority = config.getInt("early-join-priority");
-		lateJoinPriority = config.getInt("late-join-priority");
-		lateJoins = config.getBoolean("late-joins");
-		preventFireBeforeWallsFall = config
-				.getBoolean("prevent-fire-before-walls-fall");
-		ColorCycler.MAX_COLOR_TIME = config.getInt("max-color-cycler-time");
-		useTabApi = config.getBoolean("use-tab-api");
-
 		if (mapNumber == 1) {
 			redSpawn[0] = 297;
 			redSpawn[1] = 118;
@@ -274,8 +188,6 @@ public class AutoWalls extends JavaPlugin implements Listener {
 		}
 
 		teamSize = config.getInt("team-size");
-
-		Announcer a = new Announcer();
 
 		// My CC3.0 Attribution license requires you to leave this in some way
 		// If you have forked it you can say...

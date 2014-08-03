@@ -28,24 +28,29 @@ import java.util.List;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.scheduler.BukkitRunnable;
 
-public class Announcer implements Runnable {
+public class Announcer extends BukkitRunnable {
+
+	private int message = 0;
+	public List<String> messages = new ArrayList<String>();
+
+	private AutoWalls plugin = AutoWalls.get();
 	
-	public static int message=0;
-	public static List<String> messages = new ArrayList<String>();
-	
-	public void run()
-	{
-		while (true)
-		{
+	public void run() {
+		while (true) {
 			try {
-				
-				Bukkit.broadcastMessage(ChatColor.DARK_RED + "[" + AutoWalls.announcerName + "] " + ChatColor.DARK_AQUA + messages.get(message));
+
+				Bukkit.broadcastMessage(ChatColor.DARK_RED + "["
+						+ AutoWalls.announcerName + "] " + ChatColor.DARK_AQUA
+						+ messages.get(message));
 				message++;
-				if (message==messages.size()) message=0;
-				Thread.sleep(60000);
-				
-			}catch (Exception e) { e.printStackTrace(); }
+				if (message == messages.size())
+					message = 0;
+
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 		}
 	}
 }

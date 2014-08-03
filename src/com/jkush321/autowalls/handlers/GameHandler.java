@@ -7,9 +7,12 @@
  */
 package com.jkush321.autowalls.handlers;
 
+import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.logging.Level;
 
 import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.weather.WeatherChangeEvent;
@@ -39,6 +42,12 @@ public class GameHandler implements Listener {
 	private AutoWalls plugin;
 
 	public boolean gameInProgress = false;
+	public boolean gameOver = false;
+	public boolean canJoin = false;
+	
+	public List<String> playersOnline = new CopyOnWriteArrayList<String>();
+	public List<Player> playing = new CopyOnWriteArrayList<Player>();
+	public List<Player> dead = new CopyOnWriteArrayList<Player>();
 	
 	public GameHandler(AutoWalls autoWalls) {
 		this.plugin = autoWalls;
@@ -49,6 +58,13 @@ public class GameHandler implements Listener {
 	 */
 	public boolean isGameInProgress() {
 		return gameInProgress;
+	}
+	
+	/**
+	 * Sets if game in progress or not
+	 */
+	public void setGameProgress(boolean progress) {
+		this.gameInProgress = progress;
 	}
 	
 	/**

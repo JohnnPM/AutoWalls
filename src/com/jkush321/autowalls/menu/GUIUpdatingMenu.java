@@ -39,9 +39,6 @@ public class GUIUpdatingMenu implements Listener {
 		this.size = size;
 		this.player = player;
 		this.delay = delayUpdateInSeconds;
-
-		Bukkit.getServer().getPluginManager()
-				.registerEvents(this, AutoWalls.get());
 	}
 
 	public GUIUpdatingMenu setItem(int postition, ItemStack stack, String name,
