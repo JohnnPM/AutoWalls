@@ -7,9 +7,9 @@
  */
 package com.jkush321.autowalls.handlers;
 
-import java.io.File;
-import java.io.IOException;
+import java.util.HashMap;
 
+import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -38,17 +38,25 @@ import com.jkush321.autowalls.AutoWalls;
 public class PlayerHandler implements Listener {
 
 	private AutoWalls plugin = AutoWalls.get();
+	private GameHandler handler = plugin.getHandler();
 
 	@EventHandler
 	public void onPlayerLogin(PlayerLoginEvent event) {
-		File file = new File(plugin.getDataFolder(), event.getPlayer().getName()
-				+ ".txt");
-		if (!file.exists()) {
-			try {
-				file.createNewFile();
-			} catch (IOException e1) {
-				e1.printStackTrace();
+		Player player = event.getPlayer();
+		if (!player.hasPlayedBefore()) {
+			handler.createPlayerFile(player);
+			FileConfiguration playerFile = handler.getPlayerConfig(player);
+			HashMap<String, Object> defaults = new HashMap<String, Object>();
+			{
+				defaults.put("player.logins", 1);
+				defaults.put("player.username", player.getName());
+				defaults.put("player.nickname", player.getDisplayName());
+				defaults.put("player.unlocked.kits", );
+				defaults.put("player.unlocked.powers", "");
+				defaults.put("player.unlocked.cosmetics", "");
 			}
+			playerFile.addDefaults(defaults);
+			playerFile.options().copyDefaults(true);
 		}
 	}
 

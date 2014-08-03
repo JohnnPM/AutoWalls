@@ -9,7 +9,9 @@ package com.jkush321.autowalls.team;
 
 import java.util.ArrayList;
 
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
 /**
@@ -26,9 +28,12 @@ import org.bukkit.entity.Player;
  * @author 598Johnn897
  */
 public class TeamBlue extends Team {
+		
+	private static Location map1 = new Location(Bukkit.getWorld("map1"), 403, 118, -848);
+	private static Location map2 = new Location(Bukkit.getWorld("map2"), -868, 74, -132);
 	
 	public TeamBlue() {
-		super("Blue", ChatColor.BLUE);
+		super("Blue", ChatColor.BLUE, map1, map2);
 	}
 	
 	private ArrayList<Player> players = new ArrayList<Player>();

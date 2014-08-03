@@ -63,8 +63,11 @@ import com.jkush321.autowalls.kits.KitWarrior2;
 import com.jkush321.autowalls.kits.KitWarrior3;
 
 public class KitHandler {
-	public static Map<Player, Kit> assignedKits = new HashMap<Player, Kit>();
-	public static List<Kit> kitList = new ArrayList<Kit>();
+	
+	private AutoWalls plugin = AutoWalls.get();
+	
+	public Map<Player, Kit> assignedKits = new HashMap<Player, Kit>();
+	public List<Kit> kitList = new ArrayList<Kit>();
 	{
 		kitList.add(new KitArcher());
 		kitList.add(new KitBuilder());
@@ -97,7 +100,7 @@ public class KitHandler {
 		kitList.add(new KitWarrior3());
 	}
 
-	public static void setKit(Player p, Kit k) {
+	public void setKit(Player p, Kit k) {
 		if (assignedKits.containsKey(p))
 			assignedKits.remove(p);
 		assignedKits.put(p, k);
@@ -106,8 +109,8 @@ public class KitHandler {
 	/**
 	 * NOTE: Null if game in progress
 	 */
-	public static Kit getKit(Player p) {
-		if (AutoWalls.gameInProgress)
+	public Kit getKit(Player p) {
+		if (plugin.getHandler().isGameInProgress())
 			return null;
 		if (assignedKits.containsKey(p))
 			return assignedKits.get(p);
@@ -118,7 +121,7 @@ public class KitHandler {
 		return null;
 	}
 
-	public static Kit findKit(String s) {
+	public Kit findKit(String s) {
 		for (Kit k : kitList) {
 			if (k.getName().equalsIgnoreCase(s))
 				return k;

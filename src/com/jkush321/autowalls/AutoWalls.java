@@ -25,12 +25,8 @@ package com.jkush321.autowalls;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 import java.util.Random;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.logging.Logger;
 
 import org.bukkit.Bukkit;
@@ -42,7 +38,6 @@ import org.bukkit.block.Block;
 import org.bukkit.block.Sign;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
-import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
@@ -106,6 +101,11 @@ public class AutoWalls extends JavaPlugin implements Listener {
 		return teamHandler;
 	}
 	
+	private KitHandler kitHandler;
+	public KitHandler getKitHandler() {
+		return kitHandler;
+	}
+	
 	private Logger logger;
 	public Logger getAWLogger() {
 		return logger;
@@ -131,6 +131,7 @@ public class AutoWalls extends JavaPlugin implements Listener {
 		teamHandler = new TeamHandler(this);
 		logger = Logger.getLogger("AutoWalls");
 		announcer = new Announcer();
+		kitHandler = new KitHandler();
 	}
 
 	@Override

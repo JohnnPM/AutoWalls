@@ -10,6 +10,7 @@ package com.jkush321.autowalls.team;
 import java.util.ArrayList;
 
 import org.bukkit.ChatColor;
+import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
 /**
@@ -29,14 +30,18 @@ public class Team {
 	
 	private String name;
 	private ChatColor color;
+	private Location teamSpawnMap1;
+	private Location teamSpawnMap2;
 	
-	public Team(String name, ChatColor color) {
+	public Team(String name, ChatColor color, Location map1, Location map2) {
 		this.name = name;
 		this.color = color;
+		this.teamSpawnMap1 = map1;
+		this.teamSpawnMap2 = map2;
 	}
 	
 	private ArrayList<Player> players = new ArrayList<Player>();
-
+	
 	public ArrayList<Player> getPlayers() {
 		return players;
 	}
@@ -55,5 +60,33 @@ public class Team {
 	
 	public void setColor(ChatColor color) {
 		this.color = color;
+	}
+	
+	/**
+	 * @return the teamSpawnMap1
+	 */
+	public Location getTeamSpawnMap1() {
+		return teamSpawnMap1;
+	}
+
+	/**
+	 * @param teamSpawnMap1 the teamSpawnMap1 to set
+	 */
+	public void setTeamSpawnMap1(Location teamSpawnMap1) {
+		this.teamSpawnMap1 = teamSpawnMap1;
+	}
+
+	/**
+	 * @return the teamSpawnMap2
+	 */
+	public Location getTeamSpawnMap2() {
+		return teamSpawnMap2;
+	}
+
+	/**
+	 * @param teamSpawnMap2 the teamSpawnMap2 to set
+	 */
+	public void setTeamSpawnMap2(Location teamSpawnMap2) {
+		this.teamSpawnMap2 = teamSpawnMap2;
 	}
 }

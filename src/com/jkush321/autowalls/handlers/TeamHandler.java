@@ -86,6 +86,7 @@ public class TeamHandler {
 	
 	public void addPlayerToTeam(Player player, Team team) {
 		playerPerTeam.put(player, team);
+		team.getPlayers().add(player);
 	}
 	
 	/**

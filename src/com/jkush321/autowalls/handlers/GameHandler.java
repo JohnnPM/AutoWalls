@@ -7,11 +7,16 @@
  */
 package com.jkush321.autowalls.handlers;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.logging.Level;
 
 import org.bukkit.Bukkit;
+import org.bukkit.configuration.InvalidConfigurationException;
+import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -20,6 +25,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import com.jkush321.autowalls.AutoWalls;
 import com.jkush321.autowalls.commands.CommandFramework.ClassEnumerator;
+import com.jkush321.autowalls.lib.References;
 
 /**
  * Created: Jul 30, 2014 <br>
@@ -44,13 +50,62 @@ public class GameHandler implements Listener {
 	public boolean gameInProgress = false;
 	public boolean gameOver = false;
 	public boolean canJoin = false;
-	
+
 	public List<String> playersOnline = new CopyOnWriteArrayList<String>();
 	public List<Player> playing = new CopyOnWriteArrayList<Player>();
 	public List<Player> dead = new CopyOnWriteArrayList<Player>();
-	
+
 	public GameHandler(AutoWalls autoWalls) {
 		this.plugin = autoWalls;
+	}
+
+	public File getPlayerFile(Player player) {
+		File file = null;
+		try {
+			file = new File(
+					plugin.getDataFolder() + References.PLAYER_FILE_EXT,
+					player.getUniqueId() + References.PLAYER_FILE_FORMAT);
+			return file;
+		} catch (NullPointerException e) {
+			return null;
+		}
+	}
+
+	public void createPlayerFile(Player player) {
+		File file = new File(plugin.getDataFolder()
+				+ References.PLAYER_FILE_EXT, player.getUniqueId()
+				+ References.PLAYER_FILE_FORMAT);
+		if (!file.exists()) {
+			try {
+				file.createNewFile();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}	
+	}
+	
+	public FileConfiguration getPlayerConfig(Player player) {
+		FileConfiguration file = null;
+		File pFile = getPlayerFile(player);
+		try {
+			file = new YamlConfiguration();
+			try {
+				file.load(pFile);
+			} catch (IOException | InvalidConfigurationException e) {
+				e.printStackTrace();
+			}
+			return file;
+		} catch (NullPointerException e) {
+			return null;
+		}
+	}
+
+	public void savePlayerConfig(Player player) {
+		try {
+			getPlayerConfig(player).save(getPlayerFile(player));
+		} catch (IOException | NullPointerException e) {
+			return;
+		}
 	}
 
 	/**
@@ -59,14 +114,14 @@ public class GameHandler implements Listener {
 	public boolean isGameInProgress() {
 		return gameInProgress;
 	}
-	
+
 	/**
 	 * Sets if game in progress or not
 	 */
 	public void setGameProgress(boolean progress) {
 		this.gameInProgress = progress;
 	}
-	
+
 	/**
 	 * Gets rid of the rain
 	 * 
@@ -76,7 +131,7 @@ public class GameHandler implements Listener {
 	public void onWeather(WeatherChangeEvent e) {
 		e.setCancelled(true);
 	}
-	
+
 	/**
 	 * Dynamically registers all listeners/events in project.
 	 */
