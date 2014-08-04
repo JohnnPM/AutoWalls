@@ -36,23 +36,17 @@ import com.jkush321.autowalls.team.Team;
 public class TeamHandler {
 
 	private AutoWalls plugin;
-	public TeamHandler(AutoWalls autoWalls) {
-		plugin = autoWalls;
-	}
-
+	
 	public HashMap<Team, ArrayList<Player>> teams = new HashMap<Team, ArrayList<Player>>();
 	public HashMap<Player, Team> playerPerTeam = new HashMap<Player, Team>();
-	/**
-	 * Team 1 <br>
-	 * Team 2 <br>
-	 * Team 3 <br>
-	 * Team 4 <br>
-	 * <p>
-	 * (duh? i dont know what colors it would be :/)
-	 */
-	public HashMap<Team, Integer> teamByInt = new HashMap<Team, Integer>();
 	public ArrayList<Team> teamList = new ArrayList<Team>();
 	public int maxTeamSize;
+	
+	public TeamHandler(AutoWalls autoWalls) {
+		plugin = autoWalls;
+		
+		maxTeamSize = plugin.getAWConfig().getint("AutoWalls Settings.maxTeamSize");
+	}
 	
 	private void registerTeam(Team team) {
 		teams.put(team, team.getPlayers());

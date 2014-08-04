@@ -51,9 +51,10 @@ public class PlayerHandler implements Listener {
 				defaults.put("player.logins", 1);
 				defaults.put("player.username", player.getName());
 				defaults.put("player.nickname", player.getDisplayName());
-				defaults.put("player.unlocked.kits", );
+				defaults.put("player.unlocked.kits", "");
 				defaults.put("player.unlocked.powers", "");
 				defaults.put("player.unlocked.cosmetics", "");
+				defaults.put("player.stats.kills", 0);
 			}
 			playerFile.addDefaults(defaults);
 			playerFile.options().copyDefaults(true);

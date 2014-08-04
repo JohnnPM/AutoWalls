@@ -33,6 +33,10 @@ public class GUIMenu implements Listener {
 		this.player = player;
 	}
 
+	public static GUIMenu createMenu(String name, int size, Player player) {
+		return new GUIMenu(name, size, player);
+	}
+
 	public GUIMenu setOption(int postition, ItemStack stack, String name,
 			List<String> description, GUIButton button) {
 		buttons.put(postition, button);

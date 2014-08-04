@@ -74,6 +74,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.metadata.Metadatable;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.scheduler.BukkitScheduler;
 
 import com.jkush321.autowalls.commands.CommandFramework;
 import com.jkush321.autowalls.config.Config;
@@ -83,42 +84,48 @@ import com.jkush321.autowalls.handlers.TeamHandler;
 import com.jkush321.autowalls.kits.Kit;
 
 public class AutoWalls extends JavaPlugin implements Listener {
-	
+
 	private static AutoWalls plugin;
+
 	public static AutoWalls get() {
 		return plugin;
 	}
 
 	private CommandFramework framework;
-	
+
 	private GameHandler handler;
+
 	public GameHandler getHandler() {
 		return handler;
 	}
-	
+
 	private TeamHandler teamHandler;
+
 	public TeamHandler getTeamHandler() {
 		return teamHandler;
 	}
-	
+
 	private KitHandler kitHandler;
+
 	public KitHandler getKitHandler() {
 		return kitHandler;
 	}
-	
+
 	private Logger logger;
+
 	public Logger getAWLogger() {
 		return logger;
 	}
-	
+
 	private File configFile;
 	private Config config;
 
 	public Config getAWConfig() {
 		return config;
 	}
-	
+
 	private Announcer announcer;
+
 	public Announcer getAnnouncer() {
 		return announcer;
 	}
@@ -153,64 +160,20 @@ public class AutoWalls extends JavaPlugin implements Listener {
 		if (!configFile.exists())
 			this.saveResource("config.txt", false);
 		config = new Config(configFile);
-		
-		if (mapNumber == 1) {
-			redSpawn[0] = 297;
-			redSpawn[1] = 118;
-			redSpawn[2] = -848;
-
-			blueSpawn[0] = 403;
-			blueSpawn[1] = 118;
-			blueSpawn[2] = -848;
-
-			greenSpawn[0] = 403;
-			greenSpawn[1] = 118;
-			greenSpawn[2] = -736;
-
-			orangeSpawn[0] = 291;
-			orangeSpawn[1] = 118;
-			orangeSpawn[2] = -736;
-		} else {
-			redSpawn[0] = -868;
-			redSpawn[1] = 74;
-			redSpawn[2] = -212;
-
-			blueSpawn[0] = -868;
-			blueSpawn[1] = 74;
-			blueSpawn[2] = -132;
-
-			greenSpawn[0] = -718;
-			greenSpawn[1] = 74;
-			greenSpawn[2] = -132;
-
-			orangeSpawn[0] = -718;
-			orangeSpawn[1] = 74;
-			orangeSpawn[2] = -212;
-		}
-
-		teamSize = config.getInt("team-size");
 
 		// My CC3.0 Attribution license requires you to leave this in some way
 		// If you have forked it you can say...
 		// "This server runs MyFork by Me based on AutoWalls by Jkush321" or
 		// something similar
 		String[] announcements = config.getString("announcements").split(";");
-		Announcer.messages.add("This server runs AutoWalls by jkush321");
+		getAnnouncer().messages.add("Running AutoWalls by jkush321");
 		for (String s : announcements) {
-			Announcer.messages.add(s);
+			getAnnouncer().messages.add(s);
 		}
-
-		announcer = new Thread(a);
-		announcer.start();
-
-		beat = new Thread(new Heartbeat());
-		beat.start();
-
-		joinTimer = new Thread(new JoinTimer());
-		joinTimer.start();
-
-		dropper = new Thread(new WallDropper());
-		dropper.start();
+		BukkitScheduler scheduler = get().getServer().getScheduler();
+		getAnnouncer().runTaskTimer(this,
+				getAWConfig().getint("Announcer.intervals") * 20,
+				getAWConfig().getint("Announcer.intervals") * 20);
 
 		Bukkit.getScheduler().scheduleSyncRepeatingTask(this, new Runnable() {
 			public void run() {
@@ -220,21 +183,21 @@ public class AutoWalls extends JavaPlugin implements Listener {
 
 		Grenades.init();
 
-		if (Bukkit.getPluginManager().getPlugin("TabAPI") != null && useTabApi) {
-			useTabApi = true;
-			System.out.println("[AutoWalls] Successfully hooked into TabAPI!");
-		} else if (useTabApi) {
+		boolean tabAPI = getAWConfig().getboolean("AutoWalls Options.tabAPI");
+
+		if (Bukkit.getPluginManager().getPlugin("TabAPI") != null && tabAPI) {
+			tabAPI = true;
+			System.out.println("Successfully hooked into TabAPI!");
+		} else if (tabAPI) {
 			System.out
-					.println("[AutoWalls] Error! TabAPI is not installed but it was set to be used in the config!");
-			useTabApi = false;
+					.println("Error! TabAPI is not installed but it was set to be used in the config!");
+			tabAPI = false;
 		}
 	}
 
-	@SuppressWarnings("deprecation")
+	@Override
 	public void onDisable() {
-		announcer.stop();
-		beat.stop();
-		dropper.stop();
+
 	}
 
 	@Override

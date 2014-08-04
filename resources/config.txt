@@ -1,3 +1,33 @@
+# Color codes are optional as you could use something like "<aqua>" or "<dark_blue>" 
+# instead but you could use color codes if easier for you.
+
+# Please only edit the variables or it will ruin the config.
+
 ==== AutoWalls Names ====
 
-announcer
+# Prefix of the walls messages
+prefix : <blue>[<aqua>AutoWalls<blue>]<reset>
+
+# Announcer name
+announcer : <gold>[<aqua>Announcer<gold>]<reset>
+
+==== AutoWalls Options ====
+
+# Use tab API to change tab list?
+tabAPI : false
+
+==== AutoWalls Settings ====
+
+# Max Size of teams
+maxTeamSize : 5
+
+==== Announcer ====
+
+# Use announcer?
+announcer : true
+
+# How much time in between announcements (In seconds)
+intervals : 60
+
+# Announcements (Separate with ; semicolon)
+announcements : This is an announcement!;Hello World!;You are reading this!

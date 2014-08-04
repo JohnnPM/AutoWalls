@@ -88,7 +88,7 @@ public class ColorUtil {
 				if (colorizedStrings.size() > MAX_SIZE) {
 					reduceSize();
 				}
-				return colorized;
+				return ChatColor.translateAlternateColorCodes('&', colorized);
 			}
 		}
 	}
