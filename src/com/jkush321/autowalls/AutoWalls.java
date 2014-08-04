@@ -60,7 +60,6 @@ import org.bukkit.event.entity.ProjectileLaunchEvent;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
-import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerLoginEvent;
 import org.bukkit.event.player.PlayerLoginEvent.Result;
 import org.bukkit.event.player.PlayerMoveEvent;
@@ -82,63 +81,53 @@ import com.jkush321.autowalls.handlers.GameHandler;
 import com.jkush321.autowalls.handlers.KitHandler;
 import com.jkush321.autowalls.handlers.TeamHandler;
 import com.jkush321.autowalls.kits.Kit;
+import com.jkush321.autowalls.lib.References;
+import com.jkush321.autowalls.timers.WallDropTimer;
+import com.jkush321.autowalls.util.ColorUtil;
 
 public class AutoWalls extends JavaPlugin implements Listener {
 
 	private static AutoWalls plugin;
-
-	public static AutoWalls get() {
-		return plugin;
-	}
+	public static AutoWalls get() { return plugin; }
 
 	private CommandFramework framework;
-
+	
 	private GameHandler handler;
-
-	public GameHandler getHandler() {
-		return handler;
-	}
+	public GameHandler getHandler() { return handler; }
 
 	private TeamHandler teamHandler;
-
-	public TeamHandler getTeamHandler() {
-		return teamHandler;
-	}
+	public TeamHandler getTeamHandler() { return teamHandler; }
 
 	private KitHandler kitHandler;
-
-	public KitHandler getKitHandler() {
-		return kitHandler;
-	}
+	public KitHandler getKitHandler() { return kitHandler; }
+	
+	private JoinTimer joinTimer;
+	public JoinTimer getJoinTimer() { return joinTimer; }
+	
+	private WallDropTimer wallDropTimer;
+	public WallDropTimer getWallDropTimer() { return wallDropTimer; }
 
 	private Logger logger;
-
-	public Logger getAWLogger() {
-		return logger;
-	}
+	public Logger getAWLogger() { return logger; }
 
 	private File configFile;
 	private Config config;
-
-	public Config getAWConfig() {
-		return config;
-	}
+	public Config getAWConfig() { return config; }
 
 	private Announcer announcer;
-
-	public Announcer getAnnouncer() {
-		return announcer;
-	}
+	public Announcer getAnnouncer() { return announcer; }
 
 	@Override
 	public void onLoad() {
-		plugin = this;
-		framework = new CommandFramework(this);
-		handler = new GameHandler(this);
-		teamHandler = new TeamHandler(this);
-		logger = Logger.getLogger("AutoWalls");
-		announcer = new Announcer();
-		kitHandler = new KitHandler();
+		plugin =        this;
+		framework =     new CommandFramework(this);
+		handler =       new GameHandler(this);
+		teamHandler =   new TeamHandler(this);
+		logger =        Logger.getLogger("AutoWalls");
+		announcer =     new Announcer();
+		kitHandler =    new KitHandler();
+		joinTimer =     new JoinTimer();
+		wallDropTimer = new WallDropTimer();
 	}
 
 	@Override
@@ -166,7 +155,12 @@ public class AutoWalls extends JavaPlugin implements Listener {
 		// "This server runs MyFork by Me based on AutoWalls by Jkush321" or
 		// something similar
 		String[] announcements = config.getString("announcements").split(";");
-		getAnnouncer().messages.add("Running AutoWalls by jkush321");
+		getAnnouncer().messages.add(
+				ColorUtil.formatString(
+						"<gray>Running AutoWalls v<aqua>%s on <aqua>%s <gray>by <aqua>%s<gray>."
+						,References.VERSION
+						,References.GAME_VERISON
+						,References.AUTHOR));
 		for (String s : announcements) {
 			getAnnouncer().messages.add(s);
 		}
@@ -204,8 +198,6 @@ public class AutoWalls extends JavaPlugin implements Listener {
 	public boolean onCommand(CommandSender sender, Command cmd, String label,
 			String[] args) {
 		// return framework.handleCommand(sender, label, cmd, args);
-		if (gameOver)
-			return true;
 		if (cmd.getLabel().equalsIgnoreCase("join")) {
 			if (sender instanceof Player) {
 				Player p = (Player) sender;

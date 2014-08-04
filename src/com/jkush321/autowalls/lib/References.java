@@ -28,6 +28,8 @@ public class References {
 	
 	public static final String NAME = plugin.getDescription().getName();
 	public static final String VERSION = plugin.getDescription().getVersion();
+	public static final String GAME_VERISON = "1.7.9";
+	public static final String AUTHOR = plugin.getDescription().getAuthors().get(0);
 	
 	public static final String PLAYER_FILE_FORMAT = ".txt";
 	public static final String PLAYER_FILE_EXT = "/players";

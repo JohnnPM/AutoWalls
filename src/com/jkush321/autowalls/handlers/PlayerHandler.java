@@ -68,8 +68,13 @@ public class PlayerHandler implements Listener {
 	public void onPlayerJoin(PlayerJoinEvent event) {
 		Player player = event.getPlayer();
 		plugin.getHandler().playersOnline.add(player.getName());
-		
-		event.setJoinMessage(ChatColor.translateAlternateColorCodes('&', ColorUtil.formatColors(plugin.getAWConfig().getString("AutoWalls Messages.join")).replace("%player%", player.getDisplayName())));
+
+		event.setJoinMessage(ChatColor.translateAlternateColorCodes(
+				'&',
+				ColorUtil.formatColors(
+						plugin.getAWConfig().getString(
+								"AutoWalls Messages.join")).replace("%player%",
+						player.getDisplayName())));
 	}
 
 	@EventHandler

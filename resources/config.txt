@@ -42,7 +42,7 @@ maxTeamSize : 5
 announcer : true
 
 # How much time in between announcements (In seconds)
-intervals : 60
+intervals : 120
 
 # Announcements (Separate with ; semicolon)
 announcements : This is an announcement!;Hello World!;You are reading this!
