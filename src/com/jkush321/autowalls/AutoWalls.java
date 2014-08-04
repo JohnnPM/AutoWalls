@@ -1154,21 +1154,6 @@ public class AutoWalls extends JavaPlugin implements Listener {
 
 	}
 
-	@EventHandler
-	public void onJoin(PlayerJoinEvent e) {
-		e.setJoinMessage(ChatColor.AQUA + "+ " + ChatColor.DARK_AQUA
-				+ e.getPlayer().getName() + ChatColor.GRAY + " is now online");
-		if (gameInProgress) {
-			spectate(e.getPlayer());
-			for (Player p : playing) {
-				p.hidePlayer(e.getPlayer());
-			}
-		}
-		if (e.getPlayer().hasPermission("walls.op")) {
-			UpdateChecker.checkAndSendMessage(e.getPlayer());
-		}
-	}
-
 	public void checkStats() {
 		if (!gameInProgress)
 			return;

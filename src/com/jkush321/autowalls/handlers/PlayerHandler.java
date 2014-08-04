@@ -9,6 +9,7 @@ package com.jkush321.autowalls.handlers;
 
 import java.util.HashMap;
 
+import org.bukkit.ChatColor;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -18,6 +19,7 @@ import org.bukkit.event.player.PlayerLoginEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 
 import com.jkush321.autowalls.AutoWalls;
+import com.jkush321.autowalls.util.ColorUtil;
 
 /**
  * Created: Jul 31, 2014 <br>
@@ -58,6 +60,7 @@ public class PlayerHandler implements Listener {
 			}
 			playerFile.addDefaults(defaults);
 			playerFile.options().copyDefaults(true);
+			handler.savePlayerConfig(player);
 		}
 	}
 
@@ -65,6 +68,8 @@ public class PlayerHandler implements Listener {
 	public void onPlayerJoin(PlayerJoinEvent event) {
 		Player player = event.getPlayer();
 		plugin.getHandler().playersOnline.add(player.getName());
+		
+		event.setJoinMessage(ChatColor.translateAlternateColorCodes('&', ColorUtil.formatColors(plugin.getAWConfig().getString("AutoWalls Messages.join")).replace("%player%", player.getDisplayName())));
 	}
 
 	@EventHandler

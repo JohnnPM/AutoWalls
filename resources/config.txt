@@ -11,6 +11,21 @@ prefix : <blue>[<aqua>AutoWalls<blue>]<reset>
 # Announcer name
 announcer : <gold>[<aqua>Announcer<gold>]<reset>
 
+==== AutoWalls Messages ====
+
+# Player count when a player joins the game
+# %max% is the maximum amount of players allowed to play
+# %online% is the amount of players that have joined the game
+count: <white>[<gray>%online%/%max%<white>]
+
+# What shall the join message be?
+# %player% is replaces by the players display name
+join : <green>+ <aqua>%player% <white>is now online!
+
+# What shall the leave message be?
+# %player% is replaces by the players display name
+leave : <red>+ <aqua>%player% <white>is now offline!
+
 ==== AutoWalls Options ====
 
 # Use tab API to change tab list?
