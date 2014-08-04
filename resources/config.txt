@@ -11,6 +11,12 @@ prefix : <blue>[<aqua>AutoWalls<blue>]<reset>
 # Announcer name
 announcer : <gold>[<aqua>Announcer<gold>]<reset>
 
+# Team names (Colors will remain the color of the team so don't add color codes :))
+blue : Blue
+green : Green
+red : Red
+yellow : Yellow
+
 ==== AutoWalls Messages ====
 
 # Player count when a player joins the game

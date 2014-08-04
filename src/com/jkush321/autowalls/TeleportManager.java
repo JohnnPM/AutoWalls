@@ -53,6 +53,7 @@ public class TeleportManager {
 		}
 		return null;
 	}
+
 	public static void createTpRunnable(Player p, Player target)
 	{
 		Runnable runnable = new Runnable(){

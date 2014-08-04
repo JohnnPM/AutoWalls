@@ -14,6 +14,9 @@ import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
+import com.jkush321.autowalls.AutoWalls;
+import com.jkush321.autowalls.config.Config;
+
 /**
  * Created: Jul 31, 2014 <br>
  * Time: 7:24:41 PM <br>
@@ -32,8 +35,12 @@ public class TeamGreen extends Team {
 	private static Location map1 = new Location(Bukkit.getWorld("map1"), 403, 118, -736);
 	private static Location map2 = new Location(Bukkit.getWorld("map2"), -718, 74, -132);
 	
+	private static AutoWalls plugin = AutoWalls.get();
+	private static Config config = plugin.getAWConfig();
+	private static String name = config.getString("AutoWalls Names.green");
+	
 	public TeamGreen() {
-		super("Green", ChatColor.GREEN, map1, map2);
+		super(name, ChatColor.GREEN, map1, map2);
 	}
 	
 	private ArrayList<Player> players = new ArrayList<Player>();

@@ -36,18 +36,19 @@ import com.jkush321.autowalls.team.Team;
 public class TeamHandler {
 
 	private AutoWalls plugin;
-	
+
 	public HashMap<Team, ArrayList<Player>> teams = new HashMap<Team, ArrayList<Player>>();
 	public HashMap<Player, Team> playerPerTeam = new HashMap<Player, Team>();
 	public ArrayList<Team> teamList = new ArrayList<Team>();
 	public int maxTeamSize;
-	
+
 	public TeamHandler(AutoWalls autoWalls) {
 		plugin = autoWalls;
-		
-		maxTeamSize = plugin.getAWConfig().getint("AutoWalls Settings.maxTeamSize");
+
+		maxTeamSize = plugin.getAWConfig().getint(
+				"AutoWalls Settings.maxTeamSize");
 	}
-	
+
 	private void registerTeam(Team team) {
 		teams.put(team, team.getPlayers());
 		teamList.add(team);
@@ -59,12 +60,12 @@ public class TeamHandler {
 			teams.put(t, t.getPlayers());
 		}
 	}
-	
+
 	public void unregisterTeam(Team team) {
 		teams.remove(team);
 		teamList.remove(team);
 	}
-	
+
 	/**
 	 * Gets player's team else returns null
 	 * 
@@ -77,12 +78,12 @@ public class TeamHandler {
 			return null;
 		}
 	}
-	
+
 	public void addPlayerToTeam(Player player, Team team) {
 		playerPerTeam.put(player, team);
 		team.getPlayers().add(player);
 	}
-	
+
 	/**
 	 * Removes player from the team he/her is on
 	 * 
@@ -90,25 +91,27 @@ public class TeamHandler {
 	 */
 	public void removePlayerFromTeam(Player player) {
 		try {
+			playerPerTeam.get(player).getPlayers().remove(player);
+			plugin.getHandler().playing.remove(player);
 			playerPerTeam.remove(player);
 		} catch (NullPointerException e) {
 		}
 	}
-	
+
 	public ArrayList<Player> getPlayersOnTeam(Team team) {
 		return team.getPlayers();
 	}
-	
+
 	public ArrayList<Player> getPlayersOnTeams() {
 		ArrayList<Player> totalPlayers = new ArrayList<Player>();
 		for (Team t : teamList) {
-			for(Player p : t.getPlayers()) {
+			for (Player p : t.getPlayers()) {
 				totalPlayers.add(p);
 			}
 		}
 		return totalPlayers;
 	}
-	
+
 	public void registerTeams() {
 		Class<?>[] classes = ClassEnumerator.getInstance()
 				.getClassesFromThisJar(plugin);

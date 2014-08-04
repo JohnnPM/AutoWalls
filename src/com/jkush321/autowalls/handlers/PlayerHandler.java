@@ -41,7 +41,8 @@ public class PlayerHandler implements Listener {
 
 	private AutoWalls plugin = AutoWalls.get();
 	private GameHandler handler = plugin.getHandler();
-
+	private TeamHandler teamHandler = plugin.getTeamHandler();
+	
 	@EventHandler
 	public void onPlayerLogin(PlayerLoginEvent event) {
 		Player player = event.getPlayer();
@@ -80,6 +81,18 @@ public class PlayerHandler implements Listener {
 	@EventHandler
 	public void onPlayerQuit(PlayerQuitEvent event) {
 		Player player = event.getPlayer();
+		if (handler.playing.contains(player)) {
+			player.setHealth(0);
+			teamHandler.removePlayerFromTeam(player);
+			teamHandler.updateTeams();
+		}
 		plugin.getHandler().playersOnline.remove(player.getName());
+
+		event.setQuitMessage(ChatColor.translateAlternateColorCodes(
+				'&',
+				ColorUtil.formatColors(
+						plugin.getAWConfig().getString(
+								"AutoWalls Messages.leave")).replace(
+						"%player%", player.getDisplayName())));
 	}
 }
