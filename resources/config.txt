@@ -32,6 +32,9 @@ join : <green>+ <aqua>%player% <white>is now online!
 # %player% is replaces by the players display name
 leave : <red>+ <aqua>%player% <white>is now offline!
 
+# Message to show when the walls fall
+wallsFall : <red>The Walls Have Fallen! Last Team Standing Wins!
+
 ==== AutoWalls Options ====
 
 # Use tab API to change tab list?
@@ -44,6 +47,25 @@ hostileMobs : false
 
 # Max Size of teams
 maxTeamSize : 5
+
+# Time until players can join (seconds)
+joinTime : 60
+
+# Seconds before a player teleports to teammate (seconds)
+teleportDelay : 5
+
+# How many minutes until the walls fall?
+minutes : 15
+
+# Heal Players at 5 minutes until walls fall?
+heal : false
+
+# Chance for a lightning arrow to appear?
+lightningArrow : true
+
+# Chance for the lightning arrow to appear
+# Higher the number, more rare the chance
+lightningArrowChance : 10
 
 ==== Announcer ====
 

@@ -48,14 +48,12 @@ public class JoinTimer extends BukkitRunnable {
 					Bukkit.broadcastMessage(ColorUtil
 							.formatString(
 									"%s: <gray>You can join in <aqua>%02d <gray>seconds!",
-									plugin.getAWConfig().getString(
-											"AutoWalls Names.prefix"), timeLeft));
+									plugin.getPrefix(), timeLeft));
 				} else if (timeLeft == 1) {
 					Bukkit.broadcastMessage(ColorUtil
 							.formatString(
 									"%s: <white>You can now <aqua>join<white>! <dark_gray>(<gray>/join<dark_gray>)",
-									plugin.getAWConfig().getString(
-											"AutoWalls Names.prefix")));
+									plugin.getPrefix()));
 					plugin.getHandler().canJoin = true;
 				}
 			} catch (Exception e) {

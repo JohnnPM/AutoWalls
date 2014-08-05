@@ -17,6 +17,9 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.logging.Level;
 
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
+import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -27,6 +30,8 @@ import org.bukkit.plugin.java.JavaPlugin;
 import com.jkush321.autowalls.AutoWalls;
 import com.jkush321.autowalls.commands.CommandFramework.ClassEnumerator;
 import com.jkush321.autowalls.lib.References;
+import com.jkush321.autowalls.team.TeamList;
+import com.jkush321.autowalls.util.ColorUtil;
 import com.jkush321.autowalls.util.FileUtil;
 
 /**
@@ -49,11 +54,14 @@ public class GameHandler implements Listener {
 
 	private AutoWalls plugin;
 
+	public int mapNumber;
+
 	public boolean gameInProgress = false;
 	public boolean gameOver = false;
 	public boolean canJoin = false;
 	public boolean voting = false;
-	
+	public boolean tabAPI = false;
+
 	public List<String> playersOnline = new CopyOnWriteArrayList<String>();
 	public List<Player> playing = new CopyOnWriteArrayList<Player>();
 	public List<Player> dead = new CopyOnWriteArrayList<Player>();
@@ -125,7 +133,7 @@ public class GameHandler implements Listener {
 			return;
 		}
 	}
-	
+
 	public int getNextMap() {
 		try {
 			File mapFile = new File(plugin.getDataFolder(), "next_map");
@@ -158,7 +166,7 @@ public class GameHandler implements Listener {
 			return 0;
 		}
 	}
-	
+
 	/**
 	 * @return if game is in progress
 	 */
@@ -210,5 +218,129 @@ public class GameHandler implements Listener {
 			}
 		}
 		plugin.getLogger().log(Level.INFO, "Finished registration of events.");
+	}
+
+	public void dropWalls() {
+		if (mapNumber == 1) {
+			new Location(playing.get(0).getWorld(), 409, 108, -787).getBlock()
+					.setType(Material.BEDROCK);
+			new Location(playing.get(0).getWorld(), 353, 108, -855).getBlock()
+					.setType(Material.BEDROCK);
+			new Location(playing.get(0).getWorld(), 285, 108, -799).getBlock()
+					.setType(Material.BEDROCK);
+			new Location(playing.get(0).getWorld(), 341, 108, -731).getBlock()
+					.setType(Material.BEDROCK);
+			Runnable drop = new Runnable() {
+				@Override
+				public void run() {
+					new Location(playing.get(0).getWorld(), 409, 110, -787)
+							.getBlock().setType(Material.BEDROCK);
+					new Location(playing.get(0).getWorld(), 353, 110, -855)
+							.getBlock().setType(Material.BEDROCK);
+					new Location(playing.get(0).getWorld(), 285, 110, -799)
+							.getBlock().setType(Material.BEDROCK);
+					new Location(playing.get(0).getWorld(), 341, 110, -731)
+							.getBlock().setType(Material.BEDROCK);
+				}
+			};
+			Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, drop, 20);
+
+			Bukkit.broadcastMessage(ColorUtil.formatString(
+					"%s: %s",
+					plugin.getPrefix(),
+					plugin.getAWConfig().getString(
+							"AutoWalls Messages.wallsFall")));
+		} else {
+			new Location(playing.get(0).getWorld(), -794, 20, -173).getBlock()
+					.setType(Material.REDSTONE_TORCH_ON);
+			Runnable drop = new Runnable() {
+				@Override
+				public void run() {
+					new Location(playing.get(0).getWorld(), -794, 20, -173)
+							.getBlock().setType(Material.AIR);
+				}
+			};
+			Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, drop, 20);
+
+			Bukkit.broadcastMessage(ColorUtil.formatString(
+					"%s: %s",
+					plugin.getPrefix(),
+					plugin.getAWConfig().getString(
+							"AutoWalls Messages.wallsFall")));
+		}
+	}
+
+	public void endGame(TeamList team, String players) {
+		if (!gameInProgress)
+			return;
+		gameInProgress = false;
+		gameOver = true;
+		
+		for (Player p : playing) {
+			p.setHealth(0);
+		}
+		Bukkit.broadcastMessage(ChatColor.DARK_RED + "The " + team.getTeam().getName()
+				+ " team has won the game!");
+		Bukkit.broadcastMessage(ChatColor.DARK_AQUA + "Winning Players:  "
+				+ ChatColor.DARK_GREEN + players);
+		try {
+			Thread.sleep(1000);
+		} catch (Exception e) {
+		}
+		Bukkit.broadcastMessage(ChatColor.DARK_AQUA
+				+ "It is time to vote for the next map!");
+		Bukkit.broadcastMessage(ChatColor.YELLOW
+				+ "1 - The Walls   - by Hypixel - Modified by staff team");
+		Bukkit.broadcastMessage(ChatColor.YELLOW
+				+ "2 - The Walls 2 - by Hypixel - Modified by staff team");
+		Bukkit.broadcastMessage(ChatColor.GRAY
+				+ "Type the number you want in chat. Vote will last 30 seconds");
+
+		voting = true;
+
+		plugin.getVoteHandler().start();
+	}
+
+	public void checkStats() {
+		if (!gameInProgress)
+			return;
+
+		if (plugin.getTeamHandler().getTeam(TeamList.RED).getPlayers().size() == playing
+				.size()) {
+			String s = "";
+			for (Player p : plugin.getTeamHandler().getTeam(TeamList.RED)
+					.getPlayers()) {
+				s += (ChatColor.GRAY + p.getDisplayName() + ChatColor.GRAY + ", ");
+			}
+			s = s.substring(0, s.length() - 4);
+			endGame(TeamList.RED, s);
+		} else if (plugin.getTeamHandler().getTeam(TeamList.BLUE).getPlayers()
+				.size() == playing.size()) {
+			String s = "";
+			for (Player p : plugin.getTeamHandler().getTeam(TeamList.BLUE)
+					.getPlayers()) {
+				s += (ChatColor.GRAY + p.getDisplayName() + ChatColor.GRAY + ", ");
+			}
+			s = s.substring(0, s.length() - 4);
+			endGame(TeamList.BLUE, s);
+		} else if (plugin.getTeamHandler().getTeam(TeamList.GREEN).getPlayers()
+				.size() == playing.size()) {
+			String s = "";
+			for (Player p : plugin.getTeamHandler().getTeam(TeamList.GREEN)
+					.getPlayers()) {
+				s += (ChatColor.GRAY + p.getDisplayName() + ChatColor.GRAY + ", ");
+			}
+			s = s.substring(0, s.length() - 4);
+			endGame(TeamList.GREEN, s);
+		} else if (plugin.getTeamHandler().getTeam(TeamList.YELLOW)
+				.getPlayers().size() == playing.size()) {
+			String s = "";
+			for (Player p : plugin.getTeamHandler().getTeam(TeamList.YELLOW)
+					.getPlayers()) {
+				s += (ChatColor.GRAY + p.getDisplayName() + ChatColor.GRAY + ", ");
+			}
+			s = s.substring(0, s.length() - 4);
+			endGame(TeamList.YELLOW, s);
+		}
 	}
 }

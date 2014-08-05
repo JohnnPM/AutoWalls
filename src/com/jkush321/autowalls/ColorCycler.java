@@ -8,7 +8,14 @@ import java.util.Set;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
+import com.jkush321.autowalls.handlers.TeamHandler;
+import com.jkush321.autowalls.util.ColorUtil;
+
 public class ColorCycler {
+
+	private static AutoWalls plugin = AutoWalls.get();
+	private static TeamHandler teamHandler = plugin.getTeamHandler();
+
 	public static int MAX_COLOR_TIME;
 
 	public static Map<Player, ChatColor> fakeColors = new HashMap<>();
@@ -29,46 +36,52 @@ public class ColorCycler {
 	public static void cycle(Player p) {
 		ChatColor nextColor;
 		if (getFakeColor(p) == null) {
-			if (AutoWalls.redTeam.contains(p)) {
-				nextColor = ChatColor.DARK_AQUA;
-			} else if (AutoWalls.blueTeam.contains(p)) {
-				nextColor = ChatColor.DARK_GREEN;
-			} else if (AutoWalls.greenTeam.contains(p)) {
-				nextColor = ChatColor.GOLD;
+			if (teamHandler.getPlayerTeam(p).getColor().equals(ChatColor.RED)) {
+				nextColor = ChatColor.BLUE;
+			} else if (teamHandler.getPlayerTeam(p).getColor()
+					.equals(ChatColor.BLUE)) {
+				nextColor = ChatColor.GREEN;
+			} else if (teamHandler.getPlayerTeam(p).getColor()
+					.equals(ChatColor.GREEN)) {
+				nextColor = ChatColor.YELLOW;
 			} else {
-				nextColor = ChatColor.DARK_RED;
+				nextColor = ChatColor.RED;
 			}
 		} else {
-			if (getFakeColor(p) == ChatColor.DARK_RED) {
-				nextColor = ChatColor.DARK_AQUA;
-			} else if (getFakeColor(p) == ChatColor.DARK_AQUA) {
-				nextColor = ChatColor.DARK_GREEN;
-			} else if (getFakeColor(p) == ChatColor.DARK_GREEN) {
-				nextColor = ChatColor.GOLD;
+			if (getFakeColor(p) == ChatColor.RED) {
+				nextColor = ChatColor.BLUE;
+			} else if (getFakeColor(p) == ChatColor.BLUE) {
+				nextColor = ChatColor.GREEN;
+			} else if (getFakeColor(p) == ChatColor.GREEN) {
+				nextColor = ChatColor.YELLOW;
 			} else {
-				nextColor = ChatColor.DARK_RED;
+				nextColor = ChatColor.RED;
 			}
 		}
-		if ((AutoWalls.redTeam.contains(p) && nextColor == ChatColor.DARK_RED)
-				|| (AutoWalls.blueTeam.contains(p) && nextColor == ChatColor.DARK_AQUA)
-				|| (AutoWalls.greenTeam.contains(p) && nextColor == ChatColor.DARK_GREEN)
-				|| (AutoWalls.orangeTeam.contains(p) && nextColor == ChatColor.GOLD)) {
+		if ((teamHandler.getPlayerTeam(p).getColor().equals(ChatColor.RED) && nextColor == ChatColor.RED)
+				|| (teamHandler.getPlayerTeam(p).getColor()
+						.equals(ChatColor.BLUE) && nextColor == ChatColor.BLUE)
+				|| (teamHandler.getPlayerTeam(p).getColor()
+						.equals(ChatColor.GREEN) && nextColor == ChatColor.GREEN)
+				|| (teamHandler.getPlayerTeam(p).getColor()
+						.equals(ChatColor.YELLOW) && nextColor == ChatColor.YELLOW)) {
 			setFakeColor(p, null);
-			p.sendMessage(ChatColor.GREEN
-					+ "You now have your original nameplate color");
+			p.sendMessage(ColorUtil.formatString(
+					"%sYou now have your original nametag color.", teamHandler
+							.getPlayerTeam(p).getColor()));
 		} else {
-			if (nextColor == ChatColor.DARK_RED) {
-				p.sendMessage(ChatColor.GREEN
-						+ "Your nameplate now appears as red");
-			} else if (nextColor == ChatColor.DARK_AQUA) {
-				p.sendMessage(ChatColor.GREEN
-						+ "Your nameplate now appears as blue");
-			} else if (nextColor == ChatColor.DARK_GREEN) {
-				p.sendMessage(ChatColor.GREEN
-						+ "Your nameplate now appears as green");
+			if (nextColor == ChatColor.RED) {
+				p.sendMessage(ColorUtil
+						.formatColors("<red>Your Nametag Is Now Red!"));
+			} else if (nextColor == ChatColor.BLUE) {
+				p.sendMessage(ColorUtil
+						.formatColors("<blue>Your Nametag Is Now Red!"));
+			} else if (nextColor == ChatColor.GREEN) {
+				p.sendMessage(ColorUtil
+						.formatColors("<green>Your Nametag Is Now Red!"));
 			} else {
-				p.sendMessage(ChatColor.GREEN
-						+ "Your nameplate now appears as orange");
+				p.sendMessage(ColorUtil
+						.formatColors("<yellow>Your Nametag Is Now Red!"));
 			}
 			setFakeColor(p, nextColor);
 		}
@@ -89,8 +102,8 @@ public class ColorCycler {
 							colorTime.put(p, time);
 						} else {
 							fakeColors.remove(p);
-							p.sendMessage(ChatColor.RED
-									+ "Your ability to change color has worn off!");
+							p.sendMessage(ColorUtil
+									.formatColors("<red>Your Nameplate Color Has Worn Off!"));
 						}
 					} else {
 						colorTime.put(p, MAX_COLOR_TIME);

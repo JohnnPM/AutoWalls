@@ -16,6 +16,7 @@ import org.bukkit.entity.Player;
 import com.jkush321.autowalls.AutoWalls;
 import com.jkush321.autowalls.commands.CommandFramework.ClassEnumerator;
 import com.jkush321.autowalls.team.Team;
+import com.jkush321.autowalls.team.TeamList;
 import com.jkush321.autowalls.util.TagUtil;
 
 /**
@@ -55,6 +56,10 @@ public class TeamHandler {
 		teamList.add(team);
 	}
 
+	public Team getTeam(TeamList team) {
+		return team.getTeam();
+	}
+	
 	public void updateTeams() {
 		for (Team t : teamList) {
 			teams.remove(t);

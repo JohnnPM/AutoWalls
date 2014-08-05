@@ -7,6 +7,7 @@
  */
 package com.jkush321.autowalls.handlers;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Random;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -17,9 +18,11 @@ import org.bukkit.block.Sign;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 
 import com.jkush321.autowalls.AutoWalls;
+import com.jkush321.autowalls.util.ColorUtil;
 import com.jkush321.autowalls.util.StringUtil;
 
 /**
@@ -41,7 +44,9 @@ import com.jkush321.autowalls.util.StringUtil;
 public class GraveHandler implements Listener {
 
 	private AutoWalls plugin = AutoWalls.get();
+
 	public List<String> graveMessages = new CopyOnWriteArrayList<String>();
+	public HashMap<Sign, String> graveToPlayer = new HashMap<Sign, String>();
 	public List<Sign> graves = new CopyOnWriteArrayList<Sign>();
 
 	@EventHandler
@@ -49,6 +54,20 @@ public class GraveHandler implements Listener {
 		if (plugin.getHandler().playing.contains((Player) event.getEntity())) {
 			createGrave(event.getEntity().getLocation(),
 					((Player) event.getEntity()).getDisplayName());
+		}
+	}
+
+	@EventHandler
+	public void onBlockBreak(BlockBreakEvent e) {
+		if (e.getBlock() instanceof Sign) {
+			if (graves.contains((Sign) e.getBlock())) {
+				e.setCancelled(true);
+				e.getPlayer().sendMessage(
+						ColorUtil.formatString(
+								"<red>Disrespectful! Don't break %s's grave!",
+								graveToPlayer.get((Sign) e.getBlock()
+										.getState())));
+			}
 		}
 	}
 
@@ -68,6 +87,7 @@ public class GraveHandler implements Listener {
 		s.setLine(4, messageShortened.get(1));
 		s.update();
 		graves.add(s);
+		graveToPlayer.put(s, playername);
 		return s;
 	}
 }

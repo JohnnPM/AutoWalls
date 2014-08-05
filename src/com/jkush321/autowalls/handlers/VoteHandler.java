@@ -46,9 +46,10 @@ public class VoteHandler implements Runnable {
 	private AutoWalls plugin = AutoWalls.get();
 	private GameHandler handler = plugin.getHandler();
 
-	private List<String> votesForWalls1 = new CopyOnWriteArrayList<String>();
-	private List<String> votesForWalls2 = new CopyOnWriteArrayList<String>();
+	public List<String> votesForWalls1 = new CopyOnWriteArrayList<String>();
+	public List<String> votesForWalls2 = new CopyOnWriteArrayList<String>();
 
+	@SuppressWarnings("deprecation")
 	public void run() {
 		try {
 			handler.voting = false;
@@ -58,7 +59,7 @@ public class VoteHandler implements Runnable {
 					"<aqua>   Walls 1 - Votes: %02d", votesForWalls1.size()));
 			Bukkit.broadcastMessage(ColorUtil.formatString(
 					"<aqua>   Walls 2 - Votes: %02d", votesForWalls2.size()));
-			Thread.sleep(2000);
+			Thread.sleep(4000);
 			if (votesForWalls1.size() != votesForWalls2.size()) {
 				if (votesForWalls1.size() > votesForWalls2.size()) {
 					this.setNextMap(1);
@@ -78,8 +79,12 @@ public class VoteHandler implements Runnable {
 			for (Player p : Bukkit.getOnlinePlayers()) {
 				p.kickPlayer(ColorUtil
 						.formatString("<white>Next Map: <aqua>The Walls %d!\n<red>Relog to play in the next game!"));
-				handler.playersOnline.remove(p.getName());
+				handler.playersOnline.clear();
+				handler.playing.clear();
+				handler.dead.clear();
+				handler.gameInProgress = false;
 			}
+			plugin.getVoteHandler().stop();
 			Bukkit.shutdown();
 		} catch (Exception e) {
 			e.printStackTrace();

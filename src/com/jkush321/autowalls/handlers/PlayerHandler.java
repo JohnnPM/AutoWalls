@@ -115,5 +115,12 @@ public class PlayerHandler implements Listener {
 						plugin.getAWConfig().getString(
 								"AutoWalls Messages.leave")).replaceAll(
 						"%player%", player.getDisplayName())));
+		
+		if (handler.playing.contains(player) && handler.isGameInProgress())
+			player.setHealth(0);
+		else if (handler.playing.contains(player) && !handler.isGameInProgress())
+			plugin.getTeamHandler().removePlayerFromTeam(player);
+		if (plugin.getEventsHandler().getLastEvent(player) != 0)
+			plugin.getEventsHandler().lastEvent.remove(player);
 	}
 }
