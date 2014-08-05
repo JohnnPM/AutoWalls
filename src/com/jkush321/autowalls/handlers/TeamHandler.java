@@ -16,6 +16,7 @@ import org.bukkit.entity.Player;
 import com.jkush321.autowalls.AutoWalls;
 import com.jkush321.autowalls.commands.CommandFramework.ClassEnumerator;
 import com.jkush321.autowalls.team.Team;
+import com.jkush321.autowalls.util.TagUtil;
 
 /**
  * Created: Jul 30, 2014 <br>
@@ -82,6 +83,7 @@ public class TeamHandler {
 	public void addPlayerToTeam(Player player, Team team) {
 		playerPerTeam.put(player, team);
 		team.getPlayers().add(player);
+		TagUtil.setTagPrefix(player, team.getColor().toString());
 	}
 
 	/**
@@ -90,10 +92,13 @@ public class TeamHandler {
 	 * @param player
 	 */
 	public void removePlayerFromTeam(Player player) {
+		if (!plugin.getHandler().playing.contains(player))
+			return;
 		try {
 			playerPerTeam.get(player).getPlayers().remove(player);
 			plugin.getHandler().playing.remove(player);
 			playerPerTeam.remove(player);
+			TagUtil.removeTagPrefix(player);
 		} catch (NullPointerException e) {
 		}
 	}

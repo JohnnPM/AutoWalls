@@ -24,8 +24,7 @@
 package com.jkush321.autowalls;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
+import java.io.IOException;
 import java.util.Random;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -35,7 +34,6 @@ import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.block.Block;
 import org.bukkit.block.Sign;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -47,12 +45,8 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
-import org.bukkit.event.block.BlockPistonExtendEvent;
-import org.bukkit.event.block.BlockPistonRetractEvent;
-import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.block.SignChangeEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
-import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.event.entity.EntityRegainHealthEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.entity.ProjectileHitEvent;
@@ -83,8 +77,10 @@ import com.jkush321.autowalls.handlers.TeamHandler;
 import com.jkush321.autowalls.handlers.TeleportHandler;
 import com.jkush321.autowalls.kits.Kit;
 import com.jkush321.autowalls.lib.References;
+import com.jkush321.autowalls.timers.JoinTimer;
 import com.jkush321.autowalls.timers.WallDropTimer;
 import com.jkush321.autowalls.util.ColorUtil;
+import com.jkush321.autowalls.util.FileUtil;
 
 public class AutoWalls extends JavaPlugin implements Listener {
 
@@ -117,7 +113,7 @@ public class AutoWalls extends JavaPlugin implements Listener {
 
 	private String prefix;
 	public String getPrefix() {
-		return this.getAWConfig().getString("AutoWalls Names.prefix");
+		return ColorUtil.formatColors(this.getAWConfig().getString("AutoWalls Names.prefix"));
 	}
 	
 	private GraveHandler graveHandler;
@@ -182,10 +178,21 @@ public class AutoWalls extends JavaPlugin implements Listener {
 		}
 		
 		BukkitScheduler scheduler = get().getServer().getScheduler();
-		getAnnouncer().runTaskTimer(this,
-				getAWConfig().getint("Announcer.intervals") * 20,
-				getAWConfig().getint("Announcer.intervals") * 20);
+		if (getAWConfig().getboolean("Announcer.announcer"))
+			getAnnouncer().runTaskTimer(this,
+					getAWConfig().getint("Announcer.intervals") * 20,
+					getAWConfig().getint("Announcer.intervals") * 20);
 
+		File mapFile = new File(plugin.getDataFolder(), "next_map");
+		if (!mapFile.exists()) {
+			try {
+				mapFile.createNewFile();
+				FileUtil.writeTo(mapFile, "1");
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+		
 		Bukkit.getScheduler().scheduleSyncRepeatingTask(this, new Runnable() {
 			public void run() {
 				ColorCycler.tick();
@@ -204,11 +211,13 @@ public class AutoWalls extends JavaPlugin implements Listener {
 						"Error! TabAPI is not installed but it was set to be used in the config!");
 			tabAPI = false;
 		}
+		
+		this.getJoinTimer().runTaskTimer(this, 20, 20);
 	}
 
 	@Override
 	public void onDisable() {
-
+		getAnnouncer().cancel();
 	}
 
 	@Override
@@ -1071,61 +1080,6 @@ public class AutoWalls extends JavaPlugin implements Listener {
 		}
 	}
 
-	@EventHandler
-	public void onBlockPlace(BlockPlaceEvent e) {
-		if (e.getPlayer().hasPermission("walls.op"))
-			return;
-		if (!playing.contains(e.getPlayer()))
-			e.setCancelled(true);
-		if (!gameInProgress)
-			e.setCancelled(true);
-		if (mapNumber == 1) {
-			if (e.getBlock().getX() == 347)
-				e.setCancelled(true);
-			if (e.getBlock().getZ() == -793)
-				e.setCancelled(true);
-			if (e.getBlock().getX() > 408)
-				e.setCancelled(true);
-			if (e.getBlock().getZ() < -853)
-				e.setCancelled(true);
-			if (e.getBlock().getX() < 286)
-				e.setCancelled(true);
-			if (e.getBlock().getZ() > -731)
-				e.setCancelled(true);
-			if (e.getBlock().getY() > 138) {
-				e.setCancelled(true);
-				e.getPlayer()
-						.sendMessage(
-								ChatColor.RED
-										+ "You can't build over the heigt limit. This prevents getting over walls.");
-			}
-		} else {
-			if (e.getBlock().getZ() == -182)
-				e.setCancelled(true);
-			if (e.getBlock().getZ() == -164)
-				e.setCancelled(true);
-			if (e.getBlock().getX() == -785)
-				e.setCancelled(true);
-			if (e.getBlock().getX() == -803)
-				e.setCancelled(true);
-			if (e.getBlock().getZ() > -103)
-				e.setCancelled(true);
-			if (e.getBlock().getX() < -863)
-				e.setCancelled(true);
-			if (e.getBlock().getX() > -725)
-				e.setCancelled(true);
-			if (e.getBlock().getZ() < -243)
-				e.setCancelled(true);
-			if (e.getBlock().getY() > 94) {
-				e.setCancelled(true);
-				e.getPlayer()
-						.sendMessage(
-								ChatColor.RED
-										+ "You can't build over the heigt limit. This prevents getting over walls.");
-			}
-		}
-	}
-
 	/*
 	 * @EventHandler public void onVote(VotifierEvent e) { Vote v = e.getVote();
 	 * Player p = Bukkit.getPlayer(v.getUsername()); if
@@ -1530,46 +1484,6 @@ public class AutoWalls extends JavaPlugin implements Listener {
 			}
 			// e.getEntity().getWorld().createExplosion(e.getEntity().getLocation(),
 			// .8F, true);
-		}
-	}
-
-	public void createGrave(Location l, String playername) {
-		Random r = new Random();
-		l.getBlock().setType(Material.SIGN_POST);
-		l.getBlock().setData((byte) r.nextInt(16));
-		Sign s = (Sign) l.getBlock().getState();
-		s.setLine(0, "R.I.P.");
-		s.setLine(1, playername);
-		int i = r.nextInt(graveMessages.size());
-		s.setLine(3, graveMessages.get(i));
-		s.update();
-		graves.add(s);
-	}
-
-	@EventHandler
-	public void onPistonRetract(BlockPistonRetractEvent e) {
-		if (e.getRetractLocation().getBlock().getType() == Material.SAND
-				|| e.getRetractLocation().getBlock().getType() == Material.GRAVEL)
-			e.setCancelled(true);
-	}
-
-	@EventHandler
-	public void onPistonExtend(BlockPistonExtendEvent e) {
-		for (Block b : e.getBlocks()) {
-			if (b.getType() == Material.SAND || b.getType() == Material.GRAVEL)
-				e.setCancelled(true);
-		}
-	}
-
-	@EventHandler
-	public void onExplode(EntityExplodeEvent e) {
-		List<Block> newList = new ArrayList<Block>();
-		newList.addAll(e.blockList());
-
-		for (Block b : newList) {
-			if (b.getType() == Material.SAND || b.getType() == Material.GRAVEL) {
-				e.blockList().remove(b);
-			}
 		}
 	}
 

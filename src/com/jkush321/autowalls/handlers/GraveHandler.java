@@ -8,13 +8,19 @@
 package com.jkush321.autowalls.handlers;
 
 import java.util.List;
+import java.util.Random;
 import java.util.concurrent.CopyOnWriteArrayList;
 
+import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.block.Sign;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.PlayerDeathEvent;
 
 import com.jkush321.autowalls.AutoWalls;
+import com.jkush321.autowalls.util.StringUtil;
 
 /**
  * Created: Aug 4, 2014 <br>
@@ -36,9 +42,32 @@ public class GraveHandler implements Listener {
 
 	private AutoWalls plugin = AutoWalls.get();
 	public List<String> graveMessages = new CopyOnWriteArrayList<String>();
+	public List<Sign> graves = new CopyOnWriteArrayList<Sign>();
 
 	@EventHandler
 	public void onPlayerDeath(PlayerDeathEvent event) {
+		if (plugin.getHandler().playing.contains((Player) event.getEntity())) {
+			createGrave(event.getEntity().getLocation(),
+					((Player) event.getEntity()).getDisplayName());
+		}
+	}
 
+	@SuppressWarnings("deprecation")
+	public Sign createGrave(Location l, String playername) {
+		Random r = new Random();
+		l.getBlock().setType(Material.SIGN_POST);
+		l.getBlock().setData((byte) r.nextInt(16));
+		Sign s = (Sign) l.getBlock().getState();
+		s.setLine(0, "R.I.P.");
+		s.setLine(1, playername.substring(0, Math.min(playername.length(), 15)));
+		int i = r.nextInt(graveMessages.size());
+		String message = graveMessages.get(i);
+		List<String> messageShortened = StringUtil.wrapWords(
+				message.substring(0, Math.min(message.length(), 30)), 15);
+		s.setLine(3, messageShortened.get(0));
+		s.setLine(4, messageShortened.get(1));
+		s.update();
+		graves.add(s);
+		return s;
 	}
 }

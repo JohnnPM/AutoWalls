@@ -7,8 +7,11 @@
  */
 package com.jkush321.autowalls.handlers;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.logging.Level;
@@ -17,18 +20,14 @@ import org.bukkit.Bukkit;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
-import org.bukkit.event.entity.CreatureSpawnEvent;
-import org.bukkit.event.weather.WeatherChangeEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import com.jkush321.autowalls.AutoWalls;
 import com.jkush321.autowalls.commands.CommandFramework.ClassEnumerator;
 import com.jkush321.autowalls.lib.References;
+import com.jkush321.autowalls.util.FileUtil;
 
 /**
  * Created: Jul 30, 2014 <br>
@@ -53,7 +52,8 @@ public class GameHandler implements Listener {
 	public boolean gameInProgress = false;
 	public boolean gameOver = false;
 	public boolean canJoin = false;
-
+	public boolean voting = false;
+	
 	public List<String> playersOnline = new CopyOnWriteArrayList<String>();
 	public List<Player> playing = new CopyOnWriteArrayList<Player>();
 	public List<Player> dead = new CopyOnWriteArrayList<Player>();
@@ -63,9 +63,10 @@ public class GameHandler implements Listener {
 	}
 
 	public void startGame() {
-		if (gameInProgress) return;
+		if (gameInProgress)
+			return;
 	}
-	
+
 	public void addDeadPlayer(Player player) {
 		if (!dead.contains(player))
 			dead.add(player);
@@ -124,7 +125,40 @@ public class GameHandler implements Listener {
 			return;
 		}
 	}
+	
+	public int getNextMap() {
+		try {
+			File mapFile = new File(plugin.getDataFolder(), "next_map");
+			if (!mapFile.exists()) {
+				try {
+					mapFile.createNewFile();
+					FileUtil.writeTo(mapFile, "1");
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+			List<String> lines = new CopyOnWriteArrayList<String>();
+			FileInputStream fis = new FileInputStream(mapFile);
+			BufferedReader br = new BufferedReader(new InputStreamReader(fis));
 
+			String line = null;
+			while ((line = br.readLine()) != null) {
+				lines.add(line);
+			}
+			br.close();
+
+			int number;
+			try {
+				number = Integer.parseInt(lines.get(0));
+			} catch (Exception e) {
+				return 0;
+			}
+			return number;
+		} catch (IOException e) {
+			return 0;
+		}
+	}
+	
 	/**
 	 * @return if game is in progress
 	 */
@@ -137,29 +171,6 @@ public class GameHandler implements Listener {
 	 */
 	public void setGameProgress(boolean progress) {
 		this.gameInProgress = progress;
-	}
-
-	/**
-	 * Gets rid of the rain
-	 * 
-	 * @param e
-	 */
-	@EventHandler
-	public void onWeather(WeatherChangeEvent e) {
-		e.setCancelled(true);
-	}
-
-	@EventHandler(priority = EventPriority.HIGHEST)
-	public void onEntitySpawn(CreatureSpawnEvent e) {
-		if (!plugin.getAWConfig().getboolean("AutoWalls Options.hostileMobs"))
-			return;
-		if (e.getEntity().getType().equals(EntityType.CREEPER)
-				|| e.getEntity().getType().equals(EntityType.ENDERMAN)
-				|| e.getEntity().getType().equals(EntityType.SLIME)
-				|| e.getEntity().getType().equals(EntityType.SKELETON)
-				|| e.getEntity().getType().equals(EntityType.SPIDER)
-				|| e.getEntity().getType().equals(EntityType.ZOMBIE))
-			e.setCancelled(true);
 	}
 
 	/**

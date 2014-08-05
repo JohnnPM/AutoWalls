@@ -9,6 +9,7 @@ package com.jkush321.autowalls.handlers;
 
 import java.util.HashMap;
 
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
@@ -17,6 +18,9 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerLoginEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.scoreboard.DisplaySlot;
+import org.bukkit.scoreboard.Objective;
+import org.bukkit.scoreboard.Scoreboard;
 
 import com.jkush321.autowalls.AutoWalls;
 import com.jkush321.autowalls.util.ColorUtil;
@@ -42,7 +46,7 @@ public class PlayerHandler implements Listener {
 	private AutoWalls plugin = AutoWalls.get();
 	private GameHandler handler = plugin.getHandler();
 	private TeamHandler teamHandler = plugin.getTeamHandler();
-	
+
 	@EventHandler
 	public void onPlayerLogin(PlayerLoginEvent event) {
 		Player player = event.getPlayer();
@@ -51,13 +55,18 @@ public class PlayerHandler implements Listener {
 			FileConfiguration playerFile = handler.getPlayerConfig(player);
 			HashMap<String, Object> defaults = new HashMap<String, Object>();
 			{
-				defaults.put("player.logins", 1);
 				defaults.put("player.username", player.getName());
 				defaults.put("player.nickname", player.getDisplayName());
+				
 				defaults.put("player.unlocked.kits", "");
 				defaults.put("player.unlocked.powers", "");
 				defaults.put("player.unlocked.cosmetics", "");
+				
+				defaults.put("player.stats.logins", 1);
+
 				defaults.put("player.stats.kills", 0);
+				defaults.put("player.stats.coins", 0);
+				defaults.put("player.stats.wins", 0);
 			}
 			playerFile.addDefaults(defaults);
 			playerFile.options().copyDefaults(true);
@@ -74,8 +83,20 @@ public class PlayerHandler implements Listener {
 				'&',
 				ColorUtil.formatColors(
 						plugin.getAWConfig().getString(
-								"AutoWalls Messages.join")).replaceAll("%player%",
-						player.getDisplayName())));
+								"AutoWalls Messages.join")).replaceAll(
+						"%player%", player.getDisplayName())));
+
+		Scoreboard board = Bukkit.getScoreboardManager().getNewScoreboard();
+		board.registerNewObjective("showhealth", "health");
+		Objective objective = board.getObjective("showhealth");
+		objective.setDisplaySlot(DisplaySlot.BELOW_NAME);
+		objective.setDisplayName(ColorUtil.formatColors("<red>♥︎"));
+
+		for (Player p : Bukkit.getOnlinePlayers()) {
+			p.setScoreboard(board);
+			p.setHealth(p.getHealth());
+		}
+
 	}
 
 	@EventHandler

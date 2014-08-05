@@ -6,7 +6,7 @@
 ==== AutoWalls Names ====
 
 # Prefix of the walls messages
-prefix : <blue>[<aqua>AutoWalls<blue>]:<reset>
+prefix : <blue>[<aqua>Auto<white>Walls<blue>]:<reset>
 
 # Announcer name
 announcer : <gold>[<aqua>Announcer<gold>]<reset>
@@ -68,3 +68,14 @@ graves : true
 # cut off as it does not fit on the sign.
 # Be Creative! (Separate with ; semicolons)
 messages : Died Honorably.;Liked Justin Bieber. he died.;Had Much Swag.;Much Death. So Wow.;Sweg;NoSpaceDeathMessage;I am a sign
+
+==== Maps ====
+
+# Should the plugin auto download the map? (Not implemented yet)
+autoDownload : false
+
+# Walls 1 Download link
+map1 : http://download708.mediafire.com/9187v68d7s9g/sxvuvv5w9dx4gzc/The+Walls+-+PvP+Survival+-+v1.02.zip
+
+# Walls 2 Download link
+map2 : http://download745.mediafire.com/j8x8200h084g/i2k4i9y3t9131sh/The+Walls+2+-+PvP+Survival+-+v1.00.zip
