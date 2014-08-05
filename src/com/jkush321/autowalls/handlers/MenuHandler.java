@@ -42,9 +42,11 @@ public class MenuHandler implements Listener {
 	public GUIMenu kitMenu;
 
 	private AutoWalls plugin = AutoWalls.get();
-
+	private GameHandler handler = plugin.getHandler();
+	
 	@EventHandler
 	public void onItemClick(PlayerInteractEvent event) {
+		if (handler.isGameInProgress()) return;
 		if (!event.getAction().equals(Action.RIGHT_CLICK_AIR)
 				|| !event.getAction().equals(Action.RIGHT_CLICK_BLOCK)) {
 			if (event.getItem().equals(new ItemStack(Material.IRON_AXE))) {

@@ -7,6 +7,8 @@ import org.bukkit.entity.Projectile;
 import org.bukkit.event.entity.ProjectileHitEvent;
 import org.bukkit.inventory.ItemStack;
 
+import com.jkush321.autowalls.util.ItemUtils;
+
 public class Grenades {
 	public static ItemStack BASIC_GRENADE;
 	

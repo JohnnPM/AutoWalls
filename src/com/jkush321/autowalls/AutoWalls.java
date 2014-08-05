@@ -27,6 +27,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.bukkit.Bukkit;
@@ -50,7 +51,6 @@ import org.bukkit.event.block.BlockPistonExtendEvent;
 import org.bukkit.event.block.BlockPistonRetractEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.block.SignChangeEvent;
-import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.event.entity.EntityRegainHealthEvent;
@@ -67,7 +67,6 @@ import org.bukkit.event.player.PlayerPickupItemEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
-import org.bukkit.event.player.PlayerToggleSneakEvent;
 import org.bukkit.event.server.ServerListPingEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.metadata.FixedMetadataValue;
@@ -78,8 +77,10 @@ import org.bukkit.scheduler.BukkitScheduler;
 import com.jkush321.autowalls.commands.CommandFramework;
 import com.jkush321.autowalls.config.Config;
 import com.jkush321.autowalls.handlers.GameHandler;
+import com.jkush321.autowalls.handlers.GraveHandler;
 import com.jkush321.autowalls.handlers.KitHandler;
 import com.jkush321.autowalls.handlers.TeamHandler;
+import com.jkush321.autowalls.handlers.TeleportHandler;
 import com.jkush321.autowalls.kits.Kit;
 import com.jkush321.autowalls.lib.References;
 import com.jkush321.autowalls.timers.WallDropTimer;
@@ -89,7 +90,7 @@ public class AutoWalls extends JavaPlugin implements Listener {
 
 	private static AutoWalls plugin;
 	public static AutoWalls get() { return plugin; }
-
+	
 	private CommandFramework framework;
 	
 	private GameHandler handler;
@@ -114,6 +115,14 @@ public class AutoWalls extends JavaPlugin implements Listener {
 	private Config config;
 	public Config getAWConfig() { return config; }
 
+	private String prefix;
+	public String getPrefix() {
+		return this.getAWConfig().getString("AutoWalls Names.prefix");
+	}
+	
+	private GraveHandler graveHandler;
+	public GraveHandler getGraveHandler() { return graveHandler;}
+	
 	private Announcer announcer;
 	public Announcer getAnnouncer() { return announcer; }
 
@@ -128,6 +137,7 @@ public class AutoWalls extends JavaPlugin implements Listener {
 		kitHandler =    new KitHandler();
 		joinTimer =     new JoinTimer();
 		wallDropTimer = new WallDropTimer();
+		graveHandler =  new GraveHandler();
 	}
 
 	@Override
@@ -158,12 +168,19 @@ public class AutoWalls extends JavaPlugin implements Listener {
 		getAnnouncer().messages.add(
 				ColorUtil.formatString(
 						"<gray>Running AutoWalls v<aqua>%s on <aqua>%s <gray>by <aqua>%s<gray>."
-						,References.VERSION
-						,References.GAME_VERISON
-						,References.AUTHOR));
+							,References.VERSION
+							,References.GAME_VERISON
+							,References.AUTHOR));
 		for (String s : announcements) {
 			getAnnouncer().messages.add(s);
 		}
+		
+		String[] messages = plugin.getAWConfig().getString("Graves.messages")
+				.split(";");
+		for (String s : messages) {
+			getGraveHandler().graveMessages.add(s);
+		}
+		
 		BukkitScheduler scheduler = get().getServer().getScheduler();
 		getAnnouncer().runTaskTimer(this,
 				getAWConfig().getint("Announcer.intervals") * 20,
@@ -181,10 +198,10 @@ public class AutoWalls extends JavaPlugin implements Listener {
 
 		if (Bukkit.getPluginManager().getPlugin("TabAPI") != null && tabAPI) {
 			tabAPI = true;
-			System.out.println("Successfully hooked into TabAPI!");
+			getAWLogger().log(Level.INFO, "Successfully hooked into TabAPI!");
 		} else if (tabAPI) {
-			System.out
-					.println("Error! TabAPI is not installed but it was set to be used in the config!");
+			getAWLogger().log(Level.INFO,
+						"Error! TabAPI is not installed but it was set to be used in the config!");
 			tabAPI = false;
 		}
 	}
@@ -281,52 +298,6 @@ public class AutoWalls extends JavaPlugin implements Listener {
 			sender.sendMessage(ChatColor.GRAY + "The walls will drop in "
 					+ minutes + " minutes and " + seconds + " seconds!");
 			return true;
-		} else if (cmd.getLabel().equalsIgnoreCase("team")) {
-			Player p = (Player) sender;
-			if (!playing.contains(p)) {
-				p.sendMessage(ChatColor.YELLOW
-						+ "You are not in game and have no team!");
-				return true;
-			} else {
-				if (redTeam.contains(p)) {
-					p.sendMessage(ChatColor.YELLOW
-							+ "You are on the red team with...");
-					for (Player pl : redTeam) {
-						if (pl != p)
-							p.sendMessage(ChatColor.YELLOW + "-" + pl.getName());
-					}
-					if (redTeam.size() == 1)
-						p.sendMessage(ChatColor.YELLOW + "No one else :[");
-				} else if (blueTeam.contains(p)) {
-					p.sendMessage(ChatColor.YELLOW
-							+ "You are on the blue team with...");
-					for (Player pl : blueTeam) {
-						if (pl != p)
-							p.sendMessage(ChatColor.YELLOW + "-" + pl.getName());
-					}
-					if (blueTeam.size() == 1)
-						p.sendMessage(ChatColor.YELLOW + "No one else :[");
-				} else if (greenTeam.contains(p)) {
-					p.sendMessage(ChatColor.YELLOW
-							+ "You are on the green team with...");
-					for (Player pl : greenTeam) {
-						if (pl != p)
-							p.sendMessage(ChatColor.YELLOW + "-" + pl.getName());
-					}
-					if (greenTeam.size() == 1)
-						p.sendMessage(ChatColor.YELLOW + "No one else :[");
-				} else if (orangeTeam.contains(p)) {
-					p.sendMessage(ChatColor.YELLOW
-							+ "You are on the orange team with...");
-					for (Player pl : orangeTeam) {
-						if (pl != p)
-							p.sendMessage(ChatColor.YELLOW + "-" + pl.getName());
-					}
-					if (orangeTeam.size() == 1)
-						p.sendMessage(ChatColor.YELLOW + "No one else :[");
-				}
-				return true;
-			}
 		} else if (cmd.getLabel().equalsIgnoreCase("tp")) {
 			if (args.length == 1) {
 				Player p = (Player) sender;
@@ -337,16 +308,16 @@ public class AutoWalls extends JavaPlugin implements Listener {
 					else {
 						if (teamTeleports && secondsBeforeTeleport > 0) {
 							if (redTeam.contains(p) && redTeam.contains(p2))
-								TeleportManager.createTpRunnable(p, p2);
+								TeleportHandler.createTpRunnable(p, p2);
 							else if (blueTeam.contains(p)
 									&& blueTeam.contains(p2))
-								TeleportManager.createTpRunnable(p, p2);
+								TeleportHandler.createTpRunnable(p, p2);
 							else if (greenTeam.contains(p)
 									&& greenTeam.contains(p2))
-								TeleportManager.createTpRunnable(p, p2);
+								TeleportHandler.createTpRunnable(p, p2);
 							else if (orangeTeam.contains(p)
 									&& orangeTeam.contains(p2))
-								TeleportManager.createTpRunnable(p, p2);
+								TeleportHandler.createTpRunnable(p, p2);
 							else {
 								p.sendMessage(ChatColor.YELLOW + p2.getName()
 										+ " is not on your team!");
@@ -1498,17 +1469,6 @@ public class AutoWalls extends JavaPlugin implements Listener {
 		}
 	}
 
-	@EventHandler(priority = EventPriority.HIGHEST)
-	public void onEntitySpawn(CreatureSpawnEvent e) {
-		if (e.getEntity().getType().equals(EntityType.CREEPER)
-				|| e.getEntity().getType().equals(EntityType.ENDERMAN)
-				|| e.getEntity().getType().equals(EntityType.SLIME)
-				|| e.getEntity().getType().equals(EntityType.SKELETON)
-				|| e.getEntity().getType().equals(EntityType.SPIDER)
-				|| e.getEntity().getType().equals(EntityType.ZOMBIE))
-			e.setCancelled(true);
-	}
-
 	@EventHandler
 	public void onPing(ServerListPingEvent e) {
 		String message = "AutoWalls Server";
@@ -1529,14 +1489,6 @@ public class AutoWalls extends JavaPlugin implements Listener {
 			message = ChatColor.DARK_AQUA + "Voting for the next map!";
 		}
 		e.setMotd(message);
-	}
-
-	@EventHandler
-	public void onSneak(PlayerToggleSneakEvent e) {
-		if (playing.contains(e.getPlayer()) && WallDropper.time <= 0
-				&& blockSneaking)
-			if (e.isSneaking() == true)
-				e.setCancelled(true);
 	}
 
 	@EventHandler
@@ -1692,15 +1644,5 @@ public class AutoWalls extends JavaPlugin implements Listener {
 							.getShooter()).getMetadata("last-grenade").get(0)
 							.asString()));
 		}
-	}
-
-	public static void addDeadPlayer(String name) {
-		if (!dead.contains(name))
-			dead.add(name);
-	}
-
-	public static void removeDeadPlayer(String name) {
-		if (dead.contains(name))
-			dead.remove(name);
 	}
 }

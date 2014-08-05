@@ -28,7 +28,7 @@ import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemStack;
 
-import com.jkush321.autowalls.ItemUtils;
+import com.jkush321.autowalls.util.ItemUtils;
 
 
 public class KitPyro extends Kit {

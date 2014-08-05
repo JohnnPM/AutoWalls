@@ -6,12 +6,12 @@
 ==== AutoWalls Names ====
 
 # Prefix of the walls messages
-prefix : <blue>[<aqua>AutoWalls<blue>]<reset>
+prefix : <blue>[<aqua>AutoWalls<blue>]:<reset>
 
 # Announcer name
 announcer : <gold>[<aqua>Announcer<gold>]<reset>
 
-# Team names (Colors will remain the color of the team so don't add color codes :))
+# Team names (Colors will remain the color of the team so don't add color codes :P)
 blue : Blue
 green : Green
 red : Red
@@ -37,6 +37,9 @@ leave : <red>+ <aqua>%player% <white>is now offline!
 # Use tab API to change tab list?
 tabAPI : false
 
+# Spawn hostile mobs?
+hostileMobs : false
+
 ==== AutoWalls Settings ====
 
 # Max Size of teams
@@ -52,3 +55,16 @@ intervals : 120
 
 # Announcements (Separate with ; semicolon)
 announcements : This is an announcement!;Hello World!;You are reading this!
+
+==== Graves ====
+
+# Have graves when player dies?
+graves : true
+
+# Grave messages when a player dies
+# Keep the messages on one line or will give error
+# !!! Maximum if 30 characters per message !!!
+# If message is over 30 characters it will be
+# cut off as it does not fit on the sign.
+# Be Creative! (Separate with ; semicolons)
+messages : Died Honorably.;Liked Justin Bieber. he died.;Had Much Swag.;Much Death. So Wow.;Sweg;NoSpaceDeathMessage;I am a sign

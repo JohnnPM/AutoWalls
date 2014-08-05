@@ -17,9 +17,12 @@ import org.bukkit.Bukkit;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.event.weather.WeatherChangeEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -59,6 +62,20 @@ public class GameHandler implements Listener {
 		this.plugin = autoWalls;
 	}
 
+	public void startGame() {
+		if (gameInProgress) return;
+	}
+	
+	public void addDeadPlayer(Player player) {
+		if (!dead.contains(player))
+			dead.add(player);
+	}
+
+	public void removeDeadPlayer(Player player) {
+		if (dead.contains(player))
+			dead.remove(player);
+	}
+
 	public File getPlayerFile(Player player) {
 		File file = null;
 		try {
@@ -81,9 +98,9 @@ public class GameHandler implements Listener {
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
-		}	
+		}
 	}
-	
+
 	public FileConfiguration getPlayerConfig(Player player) {
 		FileConfiguration file = null;
 		File pFile = getPlayerFile(player);
@@ -132,6 +149,19 @@ public class GameHandler implements Listener {
 		e.setCancelled(true);
 	}
 
+	@EventHandler(priority = EventPriority.HIGHEST)
+	public void onEntitySpawn(CreatureSpawnEvent e) {
+		if (!plugin.getAWConfig().getboolean("AutoWalls Options.hostileMobs"))
+			return;
+		if (e.getEntity().getType().equals(EntityType.CREEPER)
+				|| e.getEntity().getType().equals(EntityType.ENDERMAN)
+				|| e.getEntity().getType().equals(EntityType.SLIME)
+				|| e.getEntity().getType().equals(EntityType.SKELETON)
+				|| e.getEntity().getType().equals(EntityType.SPIDER)
+				|| e.getEntity().getType().equals(EntityType.ZOMBIE))
+			e.setCancelled(true);
+	}
+
 	/**
 	 * Dynamically registers all listeners/events in project.
 	 */
@@ -141,6 +171,7 @@ public class GameHandler implements Listener {
 		if (classes == null || classes.length == 0) {
 			return;
 		}
+		plugin.getLogger().log(Level.INFO, "Starting registration of events:");
 		for (Class<?> c : classes) {
 			try {
 				if (Listener.class.isAssignableFrom(c) && !c.isInterface()
@@ -167,5 +198,6 @@ public class GameHandler implements Listener {
 				e.printStackTrace();
 			}
 		}
+		plugin.getLogger().log(Level.INFO, "Finished registration of events.");
 	}
 }

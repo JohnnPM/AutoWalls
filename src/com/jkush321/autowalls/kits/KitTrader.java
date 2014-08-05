@@ -28,7 +28,7 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.material.SpawnEgg;
 
-import com.jkush321.autowalls.ItemUtils;
+import com.jkush321.autowalls.util.ItemUtils;
 
 
 public class KitTrader extends Kit {

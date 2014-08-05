@@ -74,7 +74,7 @@ public class PlayerHandler implements Listener {
 				'&',
 				ColorUtil.formatColors(
 						plugin.getAWConfig().getString(
-								"AutoWalls Messages.join")).replace("%player%",
+								"AutoWalls Messages.join")).replaceAll("%player%",
 						player.getDisplayName())));
 	}
 
@@ -92,7 +92,7 @@ public class PlayerHandler implements Listener {
 				'&',
 				ColorUtil.formatColors(
 						plugin.getAWConfig().getString(
-								"AutoWalls Messages.leave")).replace(
+								"AutoWalls Messages.leave")).replaceAll(
 						"%player%", player.getDisplayName())));
 	}
 }

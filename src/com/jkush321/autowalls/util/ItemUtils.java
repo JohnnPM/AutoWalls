@@ -22,7 +22,7 @@
  */
 
 
-package com.jkush321.autowalls;
+package com.jkush321.autowalls.util;
 
 import java.util.ArrayList;
 import java.util.List;

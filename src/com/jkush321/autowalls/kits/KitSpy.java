@@ -30,7 +30,7 @@ import org.bukkit.potion.Potion;
 import org.bukkit.potion.PotionType;
 
 import com.jkush321.autowalls.ColorCycler;
-import com.jkush321.autowalls.ItemUtils;
+import com.jkush321.autowalls.util.ItemUtils;
 
 
 public class KitSpy extends Kit {

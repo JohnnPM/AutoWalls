@@ -21,7 +21,7 @@
  * 
  */
 
-package com.jkush321.autowalls;
+package com.jkush321.autowalls.handlers;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -30,7 +30,9 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
-public class TeleportManager {
+import com.jkush321.autowalls.AutoWalls;
+
+public class TeleportHandler {
 	private static Map<Player, Runnable> runnables = new HashMap<>();
 	private static Map<Runnable, Player> runnableOwnership = new HashMap<>();
 	private static Map<Player, Player> tpTargets = new HashMap<>();
@@ -58,14 +60,14 @@ public class TeleportManager {
 	{
 		Runnable runnable = new Runnable(){
 			public void run(){
-				if (AutoWalls.getTicksFromLastEvent(TeleportManager.getPlayer(this)) * 20 >= AutoWalls.secondsBeforeTeleport)
+				if (AutoWalls.getTicksFromLastEvent(TeleportHandler.getPlayer(this)) * 20 >= AutoWalls.secondsBeforeTeleport)
 				{
-					TeleportManager.getPlayer(this).sendMessage(ChatColor.YELLOW + "You are being teleported to " + TeleportManager.getTarget(TeleportManager.getPlayer(this)).getDisplayName());
-					TeleportManager.getPlayer(this).teleport(TeleportManager.getTarget(TeleportManager.getPlayer(this)));
+					TeleportHandler.getPlayer(this).sendMessage(ChatColor.YELLOW + "You are being teleported to " + TeleportHandler.getTarget(TeleportHandler.getPlayer(this)).getDisplayName());
+					TeleportHandler.getPlayer(this).teleport(TeleportHandler.getTarget(TeleportHandler.getPlayer(this)));
 				}
 				else
 				{
-					TeleportManager.getPlayer(this).sendMessage(ChatColor.RED + "Your previous teleport was cancelled.");
+					TeleportHandler.getPlayer(this).sendMessage(ChatColor.RED + "Your previous teleport was cancelled.");
 				}
 			};
 		};
