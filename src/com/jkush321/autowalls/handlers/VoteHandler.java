@@ -46,8 +46,8 @@ public class VoteHandler implements Runnable {
 	private AutoWalls plugin = AutoWalls.get();
 	private GameHandler handler = plugin.getHandler();
 
-	public List<String> votesForWalls1 = new CopyOnWriteArrayList<String>();
-	public List<String> votesForWalls2 = new CopyOnWriteArrayList<String>();
+	public static List<String> votesForWalls1 = new CopyOnWriteArrayList<String>();
+	public static List<String> votesForWalls2 = new CopyOnWriteArrayList<String>();
 
 	@SuppressWarnings("deprecation")
 	public void run() {

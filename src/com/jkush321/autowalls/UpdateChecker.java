@@ -10,6 +10,8 @@ import org.bukkit.entity.Player;
 import com.jkush321.autowalls.lib.References;
 
 public class UpdateChecker {
+	
+	@Deprecated
 	public static void checkAndSendMessage(Player p)
 	{
 		try{

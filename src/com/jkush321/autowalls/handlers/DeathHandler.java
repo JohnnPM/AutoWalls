@@ -10,6 +10,9 @@ package com.jkush321.autowalls.handlers;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.PlayerDeathEvent;
+import org.bukkit.event.player.PlayerRespawnEvent;
+
+import com.jkush321.autowalls.AutoWalls;
 
 /**
  * Created: Aug 5, 2014 <br>
@@ -26,8 +29,17 @@ import org.bukkit.event.entity.PlayerDeathEvent;
  */
 public class DeathHandler implements Listener {
 
+	private AutoWalls plugin = AutoWalls.get();
+	private GameHandler handler = plugin.getHandler();
+	
 	@EventHandler
 	public void onPlayerDeath(PlayerDeathEvent event) {
 		
+	}
+	
+	@EventHandler
+	public void onRespawn(PlayerRespawnEvent e) {
+		if (handler.isGameInProgress())
+			handler.spectate(e.getPlayer());
 	}
 }

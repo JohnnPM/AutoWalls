@@ -18,6 +18,7 @@ import java.util.logging.Level;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.configuration.InvalidConfigurationException;
@@ -26,6 +27,8 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
 
 import com.jkush321.autowalls.AutoWalls;
 import com.jkush321.autowalls.commands.CommandFramework.ClassEnumerator;
@@ -64,15 +67,11 @@ public class GameHandler implements Listener {
 
 	public List<String> playersOnline = new CopyOnWriteArrayList<String>();
 	public List<Player> playing = new CopyOnWriteArrayList<Player>();
+	public List<Player> spectators = new CopyOnWriteArrayList<Player>();
 	public List<Player> dead = new CopyOnWriteArrayList<Player>();
 
 	public GameHandler(AutoWalls autoWalls) {
 		this.plugin = autoWalls;
-	}
-
-	public void startGame() {
-		if (gameInProgress)
-			return;
 	}
 
 	public void addDeadPlayer(Player player) {
@@ -270,35 +269,86 @@ public class GameHandler implements Listener {
 		}
 	}
 
+	public void startGame() {
+		if (gameInProgress)
+			return;
+		if (!plugin.getTeamHandler().getPlayersOnTeam(TeamList.RED).isEmpty())
+			plugin.getTeamHandler().teleportPlayers(mapNumber, TeamList.RED);
+		if (!plugin.getTeamHandler().getPlayersOnTeam(TeamList.BLUE).isEmpty())
+			plugin.getTeamHandler().teleportPlayers(mapNumber, TeamList.BLUE);
+		if (!plugin.getTeamHandler().getPlayersOnTeam(TeamList.GREEN).isEmpty())
+			plugin.getTeamHandler().teleportPlayers(mapNumber, TeamList.GREEN);
+		if (!plugin.getTeamHandler().getPlayersOnTeam(TeamList.YELLOW)
+				.isEmpty())
+			plugin.getTeamHandler().teleportPlayers(mapNumber, TeamList.YELLOW);
+		for (Player p : playing) {
+			p.sendMessage(ColorUtil.formatColors("<gold>Good Luck!"));
+			if (plugin.getKitHandler().getKit(p) != null) {
+				p.getInventory().addItem(
+						plugin.getKitHandler().getKit(p).getItemStack());
+			}
+		}
+		gameInProgress = true;
+		for (Player p : Bukkit.getOnlinePlayers()) {
+			if (!playing.contains(p)) {
+				spectate(p);
+			}
+		}
+	}
+
+	public void spectate(Player p) {
+		spectators.add(p);
+		p.setAllowFlight(true);
+		p.setFlying(true);
+		p.setGameMode(GameMode.ADVENTURE);
+		p.sendMessage(ColorUtil
+				.formatColors("<gold>You are now spectating! Use your compass to navigate."));
+		for (Player player : playing) {
+			player.hidePlayer(p);
+		}
+		p.addPotionEffect(new PotionEffect(PotionEffectType.INVISIBILITY,
+				10000, 1, true));
+	}
+
 	public void endGame(TeamList team, String players) {
 		if (!gameInProgress)
 			return;
 		gameInProgress = false;
 		gameOver = true;
-		
+
 		for (Player p : playing) {
-			p.setHealth(0);
+			p.sendMessage(ColorUtil.formatColors("<gold>Congrats on winning!"));
 		}
-		Bukkit.broadcastMessage(ChatColor.DARK_RED + "The " + team.getTeam().getName()
-				+ " team has won the game!");
-		Bukkit.broadcastMessage(ChatColor.DARK_AQUA + "Winning Players:  "
-				+ ChatColor.DARK_GREEN + players);
-		try {
-			Thread.sleep(1000);
-		} catch (Exception e) {
-		}
-		Bukkit.broadcastMessage(ChatColor.DARK_AQUA
-				+ "It is time to vote for the next map!");
-		Bukkit.broadcastMessage(ChatColor.YELLOW
-				+ "1 - The Walls   - by Hypixel - Modified by staff team");
-		Bukkit.broadcastMessage(ChatColor.YELLOW
-				+ "2 - The Walls 2 - by Hypixel - Modified by staff team");
-		Bukkit.broadcastMessage(ChatColor.GRAY
-				+ "Type the number you want in chat. Vote will last 30 seconds");
+		Bukkit.broadcastMessage(ColorUtil
+				.formatColors("<white>==============="));
+		Bukkit.broadcastMessage(ColorUtil.formatString(
+				"<gold>The Winning Team Is %s%s!", team.getTeam().getColor(),
+				team.getTeam().getName()));
+		Bukkit.broadcastMessage(ColorUtil.formatString(
+				"<aqua>The Winning Players are %s!", players));
+		Bukkit.broadcastMessage(ColorUtil
+				.formatColors("<white>==============="));
 
-		voting = true;
+		Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
 
-		plugin.getVoteHandler().start();
+			@Override
+			public void run() {
+				Bukkit.broadcastMessage(ColorUtil
+						.formatColors("<gold>Voting is now open for 30 seconds! Please vote for the next map!"));
+
+				voting = true;
+			}
+
+		}, 20);
+
+		Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
+
+			@Override
+			public void run() {
+				plugin.getVoteHandler().start();
+			}
+
+		}, 31 * 20);
 	}
 
 	public void checkStats() {

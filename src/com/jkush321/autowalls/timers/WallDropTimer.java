@@ -66,8 +66,9 @@ public class WallDropTimer implements Runnable {
 				else if (time == 5 * 60) {
 					if (plugin.getAWConfig().getboolean(
 							"AutoWalls Settings.heal")) {
-						Bukkit.broadcastMessage(ColorUtil
-								.formatString("%s: <gray>Everyone has been healed!"));
+						Bukkit.broadcastMessage(ColorUtil.formatString(
+								"%s: <gray>Everyone has been healed!",
+								plugin.getPrefix()));
 						for (Player p : handler.playing) {
 							p.setHealth(20.0);
 							p.setExhaustion(20.0F);

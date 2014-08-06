@@ -10,6 +10,8 @@ import org.bukkit.inventory.ItemStack;
 import com.jkush321.autowalls.util.ItemUtils;
 
 public class Grenades {
+	private static AutoWalls plugin = AutoWalls.get();
+	
 	public static ItemStack BASIC_GRENADE;
 	
 	public static void init()
@@ -20,7 +22,7 @@ public class Grenades {
 	
 	public static void handleLanding(ProjectileHitEvent e, Projectile proj)
 	{
-		if (WallDropper.time > 0)
+		if (plugin.getWallDropTimer().time > 0)
 		{
 			Player player = (Player) proj.getShooter();
 			player.sendMessage(ChatColor.RED + "Your grenade did not go off, the walls are still up.");

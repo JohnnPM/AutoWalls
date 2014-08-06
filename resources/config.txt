@@ -67,6 +67,9 @@ lightningArrow : true
 # Higher the number, more rare the chance
 lightningArrowChance : 10
 
+# Prevent fire before the walls fall?
+fire : true
+
 ==== Announcer ====
 
 # Use announcer?
@@ -92,6 +95,7 @@ graves : true
 messages : Died Honorably.;Liked Justin Bieber. he died.;Had Much Swag.;Much Death. So Wow.;Sweg;NoSpaceDeathMessage;I am a sign
 
 ==== Maps ====
+# Put custom download link if you have modified verison of the map
 
 # Should the plugin auto download the map? (Not implemented yet)
 autoDownload : false

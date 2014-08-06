@@ -47,7 +47,7 @@ public class LightningArrow implements Listener {
 				if (e.getEntity().getShooter() instanceof Player) {
 					Player shooter = (Player) e.getEntity().getShooter();
 					if (plugin.getHandler().playing.contains(shooter)) {
-						if (WallDropper.time <= 0) {
+						if (plugin.getWallDropTimer().time <= 0) {
 							Random r = new Random();
 							int rand = r.nextInt(plugin.getAWConfig().getint(
 									"AutoWalls Settings.lightingArrowChance"));

@@ -47,8 +47,8 @@ public class MenuHandler implements Listener {
 	@EventHandler
 	public void onItemClick(PlayerInteractEvent event) {
 		if (handler.isGameInProgress()) return;
-		if (!event.getAction().equals(Action.RIGHT_CLICK_AIR)
-				|| !event.getAction().equals(Action.RIGHT_CLICK_BLOCK)) {
+		if (event.getAction().equals(Action.RIGHT_CLICK_AIR)
+				|| event.getAction().equals(Action.RIGHT_CLICK_BLOCK)) {
 			if (event.getItem().equals(new ItemStack(Material.IRON_AXE))) {
 				KitClass[] kitClasses = KitClass.values();
 				kitMenu = GUIMenu.createMenu("Select your kit...",

@@ -59,7 +59,7 @@ public class TeamHandler {
 	public Team getTeam(TeamList team) {
 		return team.getTeam();
 	}
-	
+
 	public void updateTeams() {
 		for (Team t : teamList) {
 			teams.remove(t);
@@ -85,10 +85,10 @@ public class TeamHandler {
 		}
 	}
 
-	public void addPlayerToTeam(Player player, Team team) {
-		playerPerTeam.put(player, team);
-		team.getPlayers().add(player);
-		TagUtil.setTagPrefix(player, team.getColor().toString());
+	public void addPlayerToTeam(Player player, TeamList team) {
+		playerPerTeam.put(player, team.getTeam());
+		team.getTeam().getPlayers().add(player);
+		TagUtil.setTagPrefix(player, team.getTeam().getColor().toString());
 	}
 
 	/**
@@ -108,8 +108,8 @@ public class TeamHandler {
 		}
 	}
 
-	public ArrayList<Player> getPlayersOnTeam(Team team) {
-		return team.getPlayers();
+	public ArrayList<Player> getPlayersOnTeam(TeamList red) {
+		return red.getTeam().getPlayers();
 	}
 
 	public ArrayList<Player> getPlayersOnTeams() {
@@ -120,6 +120,16 @@ public class TeamHandler {
 			}
 		}
 		return totalPlayers;
+	}
+
+	public void teleportPlayers(int mapNumber, TeamList team) {
+		for (Player p : team.getTeam().getPlayers())
+			if (mapNumber == 1)
+				p.teleport(team.getTeam().getTeamSpawnMap1());
+			else if (mapNumber == 2)
+				p.teleport(team.getTeam().getTeamSpawnMap2());
+			else
+				throw new IllegalArgumentException("Invalid Map Number!");
 	}
 
 	public void registerTeams() {
