@@ -7,30 +7,38 @@
  */
 package com.jkush321.autowalls.lib;
 
+import java.util.List;
+
 import com.jkush321.autowalls.AutoWalls;
 
 /**
  * Created: Jul 30, 2014 <br>
  * Time: 9:52:14 PM <br>
- * Year: 2014 <p>
- *
- * By: 598Johnn897 <p>
+ * Year: 2014
+ * <p>
+ * 
+ * By: 598Johnn897
+ * <p>
  * 
  * Project: AutoWalls <br>
  * File: References.java <br>
- * Package: com.jkush321.autowalls.lib <p>
+ * Package: com.jkush321.autowalls.lib
+ * <p>
  * 
  * @author 598Johnn897
  */
 public class References {
-	
+
 	private static AutoWalls plugin = AutoWalls.get();
-	
+
 	public static final String NAME = plugin.getDescription().getName();
 	public static final String VERSION = plugin.getDescription().getVersion();
 	public static final String GAME_VERISON = "1.7.9";
-	public static final String AUTHOR = plugin.getDescription().getAuthors().get(0);
-	
+	public static final String AUTHOR = plugin.getDescription().getAuthors()
+			.get(0);
+	public static final List<String> AUTHORS = plugin.getDescription()
+			.getAuthors();
+
 	public static final String PLAYER_FILE_FORMAT = ".txt";
 	public static final String PLAYER_FILE_EXT = "/players";
 

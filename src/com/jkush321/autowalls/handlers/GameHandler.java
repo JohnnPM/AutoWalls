@@ -26,6 +26,7 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
@@ -55,7 +56,7 @@ import com.jkush321.autowalls.util.FileUtil;
  */
 public class GameHandler implements Listener {
 
-	private AutoWalls plugin;
+	private AutoWalls plugin = AutoWalls.get();
 
 	public int mapNumber;
 
@@ -69,10 +70,6 @@ public class GameHandler implements Listener {
 	public List<Player> playing = new CopyOnWriteArrayList<Player>();
 	public List<Player> spectators = new CopyOnWriteArrayList<Player>();
 	public List<Player> dead = new CopyOnWriteArrayList<Player>();
-
-	public GameHandler(AutoWalls autoWalls) {
-		this.plugin = autoWalls;
-	}
 
 	public void addDeadPlayer(Player player) {
 		if (!dead.contains(player))
@@ -283,6 +280,9 @@ public class GameHandler implements Listener {
 			plugin.getTeamHandler().teleportPlayers(mapNumber, TeamList.YELLOW);
 		for (Player p : playing) {
 			p.sendMessage(ColorUtil.formatColors("<gold>Good Luck!"));
+			p.getInventory().clear();
+			p.getInventory().setArmorContents(
+					new ItemStack[] { null, null, null, null });
 			if (plugin.getKitHandler().getKit(p) != null) {
 				p.getInventory().addItem(
 						plugin.getKitHandler().getKit(p).getItemStack());
@@ -320,14 +320,14 @@ public class GameHandler implements Listener {
 			p.sendMessage(ColorUtil.formatColors("<gold>Congrats on winning!"));
 		}
 		Bukkit.broadcastMessage(ColorUtil
-				.formatColors("<white>==============="));
+				.formatColors("<white>================="));
 		Bukkit.broadcastMessage(ColorUtil.formatString(
 				"<gold>The Winning Team Is %s%s!", team.getTeam().getColor(),
 				team.getTeam().getName()));
 		Bukkit.broadcastMessage(ColorUtil.formatString(
 				"<aqua>The Winning Players are %s!", players));
 		Bukkit.broadcastMessage(ColorUtil
-				.formatColors("<white>==============="));
+				.formatColors("<white>================="));
 
 		Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
 
@@ -349,6 +349,111 @@ public class GameHandler implements Listener {
 			}
 
 		}, 31 * 20);
+	}
+
+	public void joinTeam(Player p, TeamList team) {
+		if (playing.contains(p)) {
+			p.sendMessage(ChatColor.RED + "You are already on a team!");
+		} else {
+			if (team == TeamList.RED) {
+				if (TeamList.RED.getTeam().getPlayers().size() == plugin
+						.getTeamHandler().maxTeamSize) {
+					p.sendMessage(ColorUtil.formatString(
+							"%s: <red>Team %s%s <red>is full!", plugin
+									.getPrefix(), team.getTeam().getColor(),
+							team.getTeam().getName()));
+					return;
+				}
+				plugin.getTeamHandler().addPlayerToTeam(p, TeamList.RED);
+			} else if (team == TeamList.BLUE) {
+				if (TeamList.BLUE.getTeam().getPlayers().size() == plugin
+						.getTeamHandler().maxTeamSize) {
+					p.sendMessage(ColorUtil.formatString(
+							"%s: <red>Team %s%s <red>is full!", plugin
+									.getPrefix(), team.getTeam().getColor(),
+							team.getTeam().getName()));
+					return;
+				}
+				plugin.getTeamHandler().addPlayerToTeam(p, TeamList.BLUE);
+			} else if (team == TeamList.GREEN) {
+				if (TeamList.GREEN.getTeam().getPlayers().size() == plugin
+						.getTeamHandler().maxTeamSize) {
+					p.sendMessage(ColorUtil.formatString(
+							"%s: <red>Team %s%s <red>is full!", plugin
+									.getPrefix(), team.getTeam().getColor(),
+							team.getTeam().getName()));
+					return;
+				}
+				plugin.getTeamHandler().addPlayerToTeam(p, TeamList.GREEN);
+			} else if (team == TeamList.YELLOW) {
+				if (TeamList.YELLOW.getTeam().getPlayers().size() == plugin
+						.getTeamHandler().maxTeamSize) {
+					p.sendMessage(ColorUtil.formatString(
+							"%s: <red>Team %s%s <red>is full!", plugin
+									.getPrefix(), team.getTeam().getColor(),
+							team.getTeam().getName()));
+					return;
+				}
+				plugin.getTeamHandler().addPlayerToTeam(p, TeamList.YELLOW);
+			} else {
+				throw new IllegalArgumentException("Invalid Team!");
+			}
+			playing.add(p);
+			p.setAllowFlight(false);
+			p.setGameMode(GameMode.SURVIVAL);
+			for (Player pl : Bukkit.getOnlinePlayers()) {
+				if (p != pl && !playing.contains(p))
+					p.hidePlayer(pl);
+			}
+			removeDeadPlayer(p);
+			spectators.remove(p);
+			Bukkit.broadcastMessage(ColorUtil.formatString(
+					"<gold>%s <gold>has joined %s%s <gold>team! %s",
+					p.getDisplayName(),
+					team.getTeam().getColor(),
+					team.getTeam().getName(),
+					plugin.getAWConfig()
+							.getString("AutoWalls Message.count")
+							.replaceAll("%online%", "" + playing.size())
+							.replaceAll(
+									"%max%",
+									"" + plugin.getTeamHandler().maxTeamSize
+											* 4)));
+			int remaining = (plugin.getTeamHandler().maxTeamSize * 4)
+					- playing.size();
+			if (remaining == 0 && !gameInProgress) {
+				Bukkit.broadcastMessage(ChatColor.GREEN
+						+ "It is time for the game to start! " + ChatColor.RED
+						+ "Go be the best you can be now!");
+				startGame();
+			}
+			if (gameInProgress) {
+				p.sendMessage(ColorUtil.formatString(
+						"%s: <red>It is too late to join!", plugin.getPrefix()));
+			}
+			p.setHealth(20);
+			p.setFoodLevel(20);
+			p.setExp(0);
+			p.setLevel(0);
+			p.setNoDamageTicks(60);
+		}
+	}
+
+	public void leaveTeam(Player p) {
+		if (playing.contains(p))
+			playing.remove(p);
+		plugin.getTeamHandler().removePlayerFromTeam(p);
+		if (plugin.getChatHandler().teamChatting.contains(p))
+			plugin.getChatHandler().teamChatting.remove(p);
+		for (Player pl : Bukkit.getOnlinePlayers()) {
+			if (pl != p) {
+				if (!p.canSee(pl))
+					p.showPlayer(pl);
+			}
+		}
+		Bukkit.broadcastMessage(ColorUtil.formatString(
+				"<aqua>%s <gold>has left the game!", p.getDisplayName()));
+		checkStats();
 	}
 
 	public void checkStats() {

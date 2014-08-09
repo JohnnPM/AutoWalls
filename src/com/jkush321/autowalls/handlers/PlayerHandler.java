@@ -57,11 +57,12 @@ public class PlayerHandler implements Listener {
 			{
 				defaults.put("player.username", player.getName());
 				defaults.put("player.nickname", player.getDisplayName());
-				
-				defaults.put("player.unlocked.kits", "");
-				defaults.put("player.unlocked.powers", "");
-				defaults.put("player.unlocked.cosmetics", "");
-				
+
+				defaults.put("player.unlocked.kits", new String[] { "" });
+				defaults.put("player.unlocked.powers", new String[] { "" });
+				defaults.put("player.unlocked.cosmetics", new String[] { "" });
+				defaults.put("player.unlocked.perks", new String[] { "" });
+
 				defaults.put("player.stats.logins", 1);
 
 				defaults.put("player.stats.kills", 0);
@@ -115,10 +116,11 @@ public class PlayerHandler implements Listener {
 						plugin.getAWConfig().getString(
 								"AutoWalls Messages.leave")).replaceAll(
 						"%player%", player.getDisplayName())));
-		
+
 		if (handler.playing.contains(player) && handler.isGameInProgress())
 			player.setHealth(0);
-		else if (handler.playing.contains(player) && !handler.isGameInProgress())
+		else if (handler.playing.contains(player)
+				&& !handler.isGameInProgress())
 			plugin.getTeamHandler().removePlayerFromTeam(player);
 		if (plugin.getEventsHandler().getLastEvent(player) != 0)
 			plugin.getEventsHandler().lastEvent.remove(player);

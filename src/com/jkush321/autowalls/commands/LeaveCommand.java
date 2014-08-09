@@ -45,6 +45,7 @@ public class LeaveCommand implements CommandListener {
 		if (info.isPlayer()) {
 			if (info.getArgs().length == 0) {
 				Player player = info.getPlayer();
+				player.setHealth(0);
 				if (handler.playing.contains(player)) {
 					teamHandler.removePlayerFromTeam(player);
 					Bukkit.broadcastMessage(ColorUtil.formatString(

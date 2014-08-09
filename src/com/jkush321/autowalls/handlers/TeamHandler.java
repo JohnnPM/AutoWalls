@@ -37,19 +37,14 @@ import com.jkush321.autowalls.util.TagUtil;
  */
 public class TeamHandler {
 
-	private AutoWalls plugin;
+	private AutoWalls plugin = AutoWalls.get();
 
 	public HashMap<Team, ArrayList<Player>> teams = new HashMap<Team, ArrayList<Player>>();
 	public HashMap<Player, Team> playerPerTeam = new HashMap<Player, Team>();
 	public ArrayList<Team> teamList = new ArrayList<Team>();
-	public int maxTeamSize;
 
-	public TeamHandler(AutoWalls autoWalls) {
-		plugin = autoWalls;
-
-		maxTeamSize = plugin.getAWConfig().getint(
-				"AutoWalls Settings.maxTeamSize");
-	}
+	public int maxTeamSize = plugin.getAWConfig().getint(
+			"AutoWalls Settings.maxTeamSize");
 
 	private void registerTeam(Team team) {
 		teams.put(team, team.getPlayers());
@@ -120,6 +115,35 @@ public class TeamHandler {
 			}
 		}
 		return totalPlayers;
+	}
+
+	public TeamList getTeamWithMostPlayers() {
+		int h = 0;
+		TeamList highest = null;
+
+		for (int i = 0; i < teamList.size(); i++) {
+			Team t = teamList.get(i);
+			if (teamList.get(i).getPlayers().size() > h) {
+				highest = teamToList(t);
+				h = teamList.get(i).getPlayers().size();
+			}
+		}
+		return highest;
+	}
+
+	private TeamList teamToList(Team team) {
+		switch (team.getColor().toString()) {
+		case "BLUE":
+			return TeamList.BLUE;
+		case "GREEN":
+			return TeamList.GREEN;
+		case "RED":
+			return TeamList.RED;
+		case "YELLOW":
+			return TeamList.YELLOW;
+		default:
+			return null;
+		}
 	}
 
 	public void teleportPlayers(int mapNumber, TeamList team) {

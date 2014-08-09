@@ -51,9 +51,6 @@ maxTeamSize : 5
 # Time until players can join (seconds)
 joinTime : 60
 
-# Seconds before a player teleports to teammate (seconds)
-teleportDelay : 5
-
 # How many minutes until the walls fall?
 minutes : 15
 
@@ -69,6 +66,12 @@ lightningArrowChance : 10
 
 # Prevent fire before the walls fall?
 fire : true
+
+# Allow team players to teleport to each other?
+teamTeleport : true
+
+# Seconds before a player teleports to teammate (seconds)
+teleportDelay : 5
 
 ==== Announcer ====
 
@@ -88,7 +91,7 @@ graves : true
 
 # Grave messages when a player dies
 # Keep the messages on one line or will give error
-# !!! Maximum if 30 characters per message !!!
+# !!! Maximum of 30 characters per message !!!
 # If message is over 30 characters it will be
 # cut off as it does not fit on the sign.
 # Be Creative! (Separate with ; semicolons)

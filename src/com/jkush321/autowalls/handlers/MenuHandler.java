@@ -16,7 +16,7 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 
 import com.jkush321.autowalls.AutoWalls;
-import com.jkush321.autowalls.kits.KitClass;
+import com.jkush321.autowalls.kit.KitClass;
 import com.jkush321.autowalls.menu.GUIButton;
 import com.jkush321.autowalls.menu.GUIMenu;
 import com.jkush321.autowalls.util.StringUtil;
