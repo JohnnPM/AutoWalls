@@ -14,6 +14,7 @@ import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.plugin.Plugin;
 
 import com.jkush321.autowalls.AutoWalls;
 
@@ -22,19 +23,20 @@ public class GUIMenu implements Listener {
 	private int size;
 	private Player player;
 	private boolean willClose = false;
-
+	
 	private HashMap<Integer, GUIButton> buttons = new HashMap<Integer, GUIButton>();
 
 	private HashMap<Integer, ItemStack> options = new HashMap<Integer, ItemStack>();
 
-	public GUIMenu(String name, int size, Player player) {
+	public GUIMenu(Plugin plugin, String name, int size, Player player) {
 		this.name = name;
 		this.size = size;
 		this.player = player;
+		Bukkit.getPluginManager().registerEvents(this, plugin);
 	}
 
-	public static GUIMenu createMenu(String name, int size, Player player) {
-		return new GUIMenu(name, size, player);
+	public static GUIMenu createMenu(Plugin plugin, String name, int size, Player player) {
+		return new GUIMenu(plugin, name, size, player);
 	}
 
 	public GUIMenu setOption(int postition, ItemStack stack, String name,

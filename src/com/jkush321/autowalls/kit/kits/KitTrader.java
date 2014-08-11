@@ -31,30 +31,28 @@ import org.bukkit.material.SpawnEgg;
 import com.jkush321.autowalls.kit.Kit;
 import com.jkush321.autowalls.util.ItemUtils;
 
-
 public class KitTrader extends Kit {
 
 	ItemStack[] contents;
-	
-	public KitTrader()
-	{
+
+	public KitTrader() {
 		ItemStack emerald = new ItemStack(Material.EMERALD, 32);
 		emerald = ItemUtils.setItemName(emerald, "Emerald Coin");
-		
+
 		SpawnEgg egg = new SpawnEgg();
 		egg.setSpawnedType(EntityType.VILLAGER);
-		
-		contents = new ItemStack[]{ emerald, egg.toItemStack(6) };
+
+		contents = new ItemStack[] { emerald, egg.toItemStack(6) };
 	}
-	
+
 	@Override
 	public ItemStack[] getItemStack() {
 		return contents;
 	}
 
 	@Override
-	public int getRequiredPriority() {
-		return 10;
+	public int getCoinsToBuy() {
+		return 100;
 	}
 
 }

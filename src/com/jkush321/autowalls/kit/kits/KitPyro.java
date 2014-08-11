@@ -31,31 +31,30 @@ import org.bukkit.inventory.ItemStack;
 import com.jkush321.autowalls.kit.Kit;
 import com.jkush321.autowalls.util.ItemUtils;
 
-
 public class KitPyro extends Kit {
 
 	ItemStack[] contents;
-	
-	public KitPyro()
-	{
+
+	public KitPyro() {
 		ItemStack helm = new ItemStack(Material.DIAMOND_HELMET, 1);
 		helm.addEnchantment(Enchantment.PROTECTION_FIRE, 2);
-		
+
 		ItemStack fireSword = new ItemStack(Material.IRON_SWORD, 1);
 		fireSword.addEnchantment(Enchantment.FIRE_ASPECT, 1);
-		fireSword = ItemUtils.setItemName(fireSword, ChatColor.YELLOW + "Ignition Blade I");
-		
-		contents = new ItemStack[]{ helm, fireSword };
+		fireSword = ItemUtils.setItemName(fireSword, ChatColor.YELLOW
+				+ "Ignition Blade I");
+
+		contents = new ItemStack[] { helm, fireSword };
 	}
-	
+
 	@Override
 	public ItemStack[] getItemStack() {
 		return contents;
 	}
 
 	@Override
-	public int getRequiredPriority() {
-		return 75;
+	public int getCoinsToBuy() {
+		return 750;
 	}
 
 }

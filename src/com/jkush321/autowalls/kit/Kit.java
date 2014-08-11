@@ -26,16 +26,19 @@ package com.jkush321.autowalls.kit;
 import org.bukkit.inventory.ItemStack;
 
 public class Kit {
-	public ItemStack[] getItemStack(){
+	public ItemStack[] getItemStack() {
 		return null;
 	}
-	public int getRequiredPriority(){
+
+	public int getCoinsToBuy() {
 		return 0;
 	}
-	public String getName(){
+
+	public String getName() {
 		return this.getClass().getSimpleName().substring(3);
 	}
-	public boolean isDefault(){
+
+	public boolean isDefault() {
 		return false;
 	}
 }

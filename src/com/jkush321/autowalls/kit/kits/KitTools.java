@@ -28,19 +28,27 @@ import org.bukkit.inventory.ItemStack;
 
 import com.jkush321.autowalls.kit.Kit;
 
-
 public class KitTools extends Kit {
 
-	ItemStack[] contents = new ItemStack[]{ new ItemStack(Material.WOOD_PICKAXE, 1), new ItemStack(Material.WOOD_AXE, 1), new ItemStack(Material.WOOD_SPADE, 1), new ItemStack(Material.WOOD_SWORD, 1) };
-	
+	ItemStack[] contents = new ItemStack[] {
+			new ItemStack(Material.WOOD_PICKAXE, 1),
+			new ItemStack(Material.WOOD_AXE, 1),
+			new ItemStack(Material.WOOD_SPADE, 1),
+			new ItemStack(Material.WOOD_SWORD, 1) };
+
 	@Override
 	public ItemStack[] getItemStack() {
 		return contents;
 	}
 
 	@Override
-	public int getRequiredPriority() {
+	public int getCoinsToBuy() {
 		return 0;
+	}
+
+	@Override
+	public boolean isDefault() {
+		return true;
 	}
 
 }

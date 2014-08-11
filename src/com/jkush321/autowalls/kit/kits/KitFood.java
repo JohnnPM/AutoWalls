@@ -28,19 +28,24 @@ import org.bukkit.inventory.ItemStack;
 
 import com.jkush321.autowalls.kit.Kit;
 
-
 public class KitFood extends Kit {
 
-	ItemStack[] contents = new ItemStack[]{ new ItemStack(Material.COOKED_BEEF, 12) };
-	
+	ItemStack[] contents = new ItemStack[] { new ItemStack(
+			Material.COOKED_BEEF, 12) };
+
 	@Override
 	public ItemStack[] getItemStack() {
 		return contents;
 	}
 
 	@Override
-	public int getRequiredPriority() {
+	public int getCoinsToBuy() {
 		return 0;
+	}
+
+	@Override
+	public boolean isDefault() {
+		return true;
 	}
 
 }

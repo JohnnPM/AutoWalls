@@ -43,8 +43,22 @@ public class TeamHandler {
 	public HashMap<Player, Team> playerPerTeam = new HashMap<Player, Team>();
 	public ArrayList<Team> teamList = new ArrayList<Team>();
 
-	public int maxTeamSize = plugin.getAWConfig().getint(
-			"AutoWalls Settings.maxTeamSize");
+	public int maxTeamSize;
+
+	/**
+	 * @return the maxTeamSize
+	 */
+	public int getMaxTeamSize() {
+		return maxTeamSize;
+	}
+
+	/**
+	 * @param maxTeamSize
+	 *            the maxTeamSize to set
+	 */
+	public void setMaxTeamSize(int maxTeamSize) {
+		this.maxTeamSize = maxTeamSize;
+	}
 
 	private void registerTeam(Team team) {
 		teams.put(team, team.getPlayers());
@@ -60,6 +74,8 @@ public class TeamHandler {
 			teams.remove(t);
 			teams.put(t, t.getPlayers());
 		}
+		if (plugin.getHandler().tabAPI)
+			plugin.getTabHandler().updateTabAll();
 	}
 
 	public void unregisterTeam(Team team) {
@@ -84,6 +100,8 @@ public class TeamHandler {
 		playerPerTeam.put(player, team.getTeam());
 		team.getTeam().getPlayers().add(player);
 		TagUtil.setTagPrefix(player, team.getTeam().getColor().toString());
+		if (plugin.getHandler().tabAPI)
+			plugin.getTabHandler().updateTabAll();
 	}
 
 	/**
@@ -99,6 +117,8 @@ public class TeamHandler {
 			plugin.getHandler().playing.remove(player);
 			playerPerTeam.remove(player);
 			TagUtil.removeTagPrefix(player);
+			if (plugin.getHandler().tabAPI)
+				plugin.getTabHandler().updateTabAll();
 		} catch (NullPointerException e) {
 		}
 	}
@@ -154,6 +174,8 @@ public class TeamHandler {
 				p.teleport(team.getTeam().getTeamSpawnMap2());
 			else
 				throw new IllegalArgumentException("Invalid Map Number!");
+		if (plugin.getHandler().tabAPI)
+			plugin.getTabHandler().updateTabAll();
 	}
 
 	public void registerTeams() {
@@ -166,7 +188,8 @@ public class TeamHandler {
 		for (Class<?> c : classes) {
 			try {
 				if (Team.class.isAssignableFrom(c) && !c.isInterface()
-						&& !c.isEnum() && !c.isAnnotation()) {
+						&& !c.isEnum() && !c.isAnnotation()
+						&& !c.equals(Team.class)) {
 					plugin.getLogger().log(Level.INFO,
 							"Searching class: " + c.getSimpleName());
 					registerTeam((Team) c.newInstance());
@@ -176,7 +199,7 @@ public class TeamHandler {
 						Level.INFO,
 						c.getSimpleName()
 								+ " does not use the default constructor");
-				e.printStackTrace();
+				//e.printStackTrace();
 			}
 		}
 		plugin.getAWLogger().log(Level.INFO, "Ended registration of teams.");

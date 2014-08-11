@@ -28,20 +28,26 @@ import org.bukkit.inventory.ItemStack;
 
 import com.jkush321.autowalls.kit.Kit;
 
-
 public class KitBuilder2 extends Kit {
 
 	@SuppressWarnings("deprecation")
-	ItemStack[] contents = new ItemStack[]{ new ItemStack(Material.COBBLESTONE, 64), new ItemStack(Material.COBBLESTONE, 64), new ItemStack(Material.STONE, 64), new ItemStack(Material.STONE, 64), new ItemStack(Material.STONE, 64), new ItemStack(Material.STONE, 64), new ItemStack(98, 64), new ItemStack(98, 64), new ItemStack(Material.WOOD, 16) };
-	
+	ItemStack[] contents = new ItemStack[] {
+			new ItemStack(Material.COBBLESTONE, 64),
+			new ItemStack(Material.COBBLESTONE, 64),
+			new ItemStack(Material.STONE, 64),
+			new ItemStack(Material.STONE, 64),
+			new ItemStack(Material.STONE, 64),
+			new ItemStack(Material.STONE, 64), new ItemStack(98, 64),
+			new ItemStack(98, 64), new ItemStack(Material.WOOD, 16) };
+
 	@Override
 	public ItemStack[] getItemStack() {
 		return contents;
 	}
 
 	@Override
-	public int getRequiredPriority() {
-		return 50;
+	public int getCoinsToBuy() {
+		return 100;
 	}
 
 }

@@ -29,26 +29,24 @@ import org.bukkit.inventory.ItemStack;
 
 import com.jkush321.autowalls.kit.Kit;
 
-
 public class KitParatrooper extends Kit {
 
 	ItemStack[] contents;
-	
-	public KitParatrooper()
-	{
+
+	public KitParatrooper() {
 		ItemStack boots = new ItemStack(Material.GOLD_BOOTS, 1);
 		boots.addEnchantment(Enchantment.PROTECTION_FALL, 4);
-		contents = new ItemStack[]{ boots };
+		contents = new ItemStack[] { boots };
 	}
-	
+
 	@Override
 	public ItemStack[] getItemStack() {
 		return contents;
 	}
 
 	@Override
-	public int getRequiredPriority() {
-		return 5;
+	public int getCoinsToBuy() {
+		return 50;
 	}
 
 }

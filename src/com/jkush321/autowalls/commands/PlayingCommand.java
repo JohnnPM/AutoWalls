@@ -7,6 +7,7 @@
  */
 package com.jkush321.autowalls.commands;
 
+import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
 import com.jkush321.autowalls.AutoWalls;
@@ -42,8 +43,9 @@ public class PlayingCommand implements CommandListener {
 	@Command(command = "playing", permission = "walls.playing", aliases = {
 			"who", "list" })
 	public void playing(CommandArgs info) {
-		if(!handler.isGameInProgress()){
-			info.getSender().sendMessage(ColorUtil.formatColors("<red>Game is not in progress!"));
+		if (!handler.isGameInProgress()) {
+			info.getSender().sendMessage(
+					ColorUtil.formatColors("<red>Game is not in progress!"));
 			return;
 		}
 		info.getSender().sendMessage(
@@ -55,9 +57,9 @@ public class PlayingCommand implements CommandListener {
 					teamHandler.teamList.get(i).getColor(),
 					teamHandler.teamList.get(i).getName());
 			for (Player p : teamHandler.teamList.get(i).getPlayers()) {
-				s += p.getDisplayName() + ", ";
+				s += p.getDisplayName() + ChatColor.GRAY + ", ";
 			}
-			info.getSender().sendMessage(s.substring(0, s.length() - 2) + ".");
+			info.getSender().sendMessage(s.substring(0, s.length() - 4) + ".");
 		}
 	}
 }

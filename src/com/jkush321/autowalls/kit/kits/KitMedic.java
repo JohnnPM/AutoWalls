@@ -28,19 +28,20 @@ import org.bukkit.inventory.ItemStack;
 
 import com.jkush321.autowalls.kit.Kit;
 
-
 public class KitMedic extends Kit {
 
-	ItemStack[] contents = new ItemStack[]{ new ItemStack(Material.POTION, 8, (short)16421), new ItemStack(Material.COOKED_BEEF, 8) };
-	
+	ItemStack[] contents = new ItemStack[] {
+			new ItemStack(Material.POTION, 8, (short) 16421),
+			new ItemStack(Material.COOKED_BEEF, 8) };
+
 	@Override
 	public ItemStack[] getItemStack() {
 		return contents;
 	}
 
 	@Override
-	public int getRequiredPriority() {
-		return 10;
+	public int getCoinsToBuy() {
+		return 100;
 	}
 
 }

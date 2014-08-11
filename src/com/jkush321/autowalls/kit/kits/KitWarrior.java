@@ -28,19 +28,21 @@ import org.bukkit.inventory.ItemStack;
 
 import com.jkush321.autowalls.kit.Kit;
 
-
 public class KitWarrior extends Kit {
 
-	ItemStack[] contents = new ItemStack[]{ new ItemStack(Material.IRON_SWORD, 1), new ItemStack(Material.CHAINMAIL_HELMET, 1), new ItemStack(Material.GOLD_CHESTPLATE, 1) };
-	
+	ItemStack[] contents = new ItemStack[] {
+			new ItemStack(Material.IRON_SWORD, 1),
+			new ItemStack(Material.CHAINMAIL_HELMET, 1),
+			new ItemStack(Material.GOLD_CHESTPLATE, 1) };
+
 	@Override
 	public ItemStack[] getItemStack() {
 		return contents;
 	}
 
 	@Override
-	public int getRequiredPriority() {
-		return 25;
+	public int getCoinsToBuy() {
+		return 250;
 	}
 
 }

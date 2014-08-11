@@ -42,18 +42,17 @@ public class Announcer extends BukkitRunnable {
 	private Config config = plugin.getAWConfig();
 
 	public void run() {
-		while (true) {
-			try {
-				Bukkit.broadcastMessage(ChatColor.translateAlternateColorCodes(
-						'&', ColorUtil.formatString("%s: <gray>%s",
-								config.getString("AutoWalls Names.announcer"),
-								messages.get(message))));
-				message++;
-				if (message == messages.size())
-					message = 0;
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
+		try {
+			Bukkit.broadcastMessage(ChatColor.translateAlternateColorCodes('&',
+					ColorUtil.formatString("%s: <gray>%s",
+							config.getString("AutoWalls Names.announcer"),
+							messages.get(message))));
+			message++;
+			if (message == messages.size())
+				message = 0;
+		} catch (Exception e) {
+			e.printStackTrace();
+			this.cancel();
 		}
 	}
 }

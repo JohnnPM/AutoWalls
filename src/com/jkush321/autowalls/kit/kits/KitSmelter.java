@@ -28,19 +28,21 @@ import org.bukkit.inventory.ItemStack;
 
 import com.jkush321.autowalls.kit.Kit;
 
-
 public class KitSmelter extends Kit {
 
-	ItemStack[] contents = new ItemStack[]{ new ItemStack(Material.FURNACE, 8), new ItemStack(Material.COAL, 32, (short)1), new ItemStack(Material.IRON_PICKAXE) };
-	
+	ItemStack[] contents = new ItemStack[] {
+			new ItemStack(Material.FURNACE, 8),
+			new ItemStack(Material.COAL, 32, (short) 1),
+			new ItemStack(Material.IRON_PICKAXE) };
+
 	@Override
 	public ItemStack[] getItemStack() {
 		return contents;
 	}
 
 	@Override
-	public int getRequiredPriority() {
-		return 15;
+	public int getCoinsToBuy() {
+		return 150;
 	}
 
 }

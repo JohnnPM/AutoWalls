@@ -31,13 +31,11 @@ import org.bukkit.inventory.ItemStack;
 import com.jkush321.autowalls.kit.Kit;
 import com.jkush321.autowalls.util.ItemUtils;
 
-
 public class KitPyro2 extends Kit {
 
 	ItemStack[] contents;
-	
-	public KitPyro2()
-	{
+
+	public KitPyro2() {
 		ItemStack chest = new ItemStack(Material.DIAMOND_CHESTPLATE, 1);
 		ItemStack legs = new ItemStack(Material.CHAINMAIL_LEGGINGS);
 		ItemStack helm = new ItemStack(Material.IRON_HELMET);
@@ -46,19 +44,21 @@ public class KitPyro2 extends Kit {
 		chest.addUnsafeEnchantment(Enchantment.PROTECTION_FIRE, 5);
 		ItemStack fireSword = new ItemStack(Material.DIAMOND_SWORD, 1);
 		fireSword.addEnchantment(Enchantment.FIRE_ASPECT, 2);
-		fireSword = ItemUtils.setItemName(fireSword, ChatColor.YELLOW + "Ignition Blade II");
+		fireSword = ItemUtils.setItemName(fireSword, ChatColor.YELLOW
+				+ "Ignition Blade II");
 
-		contents = new ItemStack[]{ fireSword, helm, chest, legs, fireCharges, lavaBucket };
+		contents = new ItemStack[] { fireSword, helm, chest, legs, fireCharges,
+				lavaBucket };
 	}
-	
+
 	@Override
 	public ItemStack[] getItemStack() {
 		return contents;
 	}
 
 	@Override
-	public int getRequiredPriority() {
-		return 300;
+	public int getCoinsToBuy() {
+		return 3000;
 	}
 
 }

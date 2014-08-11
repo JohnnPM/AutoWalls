@@ -44,7 +44,7 @@ public class JoinTimer extends BukkitRunnable {
 				timeLeft--;
 
 				if ((timeLeft >= 10 && timeLeft % 10 == 0)
-						|| (timeLeft >= 5 && timeLeft < 1)) {
+						|| (timeLeft <= 5 && timeLeft > 0)) {
 					Bukkit.broadcastMessage(ColorUtil
 							.formatString(
 									"%s: <gray>You can join in <aqua>%02d <gray>seconds!",
@@ -59,6 +59,7 @@ public class JoinTimer extends BukkitRunnable {
 			} catch (Exception e) {
 				plugin.getAWLogger().log(Level.SEVERE, "Join timer error:");
 				e.printStackTrace();
+				this.cancel();
 			}
 		}
 	}

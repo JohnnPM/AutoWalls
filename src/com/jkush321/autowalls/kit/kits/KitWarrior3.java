@@ -29,29 +29,39 @@ import org.bukkit.inventory.ItemStack;
 
 import com.jkush321.autowalls.kit.Kit;
 
-
 public class KitWarrior3 extends Kit {
 
-	ItemStack[] contents = new ItemStack[]{ new ItemStack(Material.DIAMOND_SWORD, 1), new ItemStack(Material.COOKED_BEEF, 4), new ItemStack(Material.IRON_HELMET), new ItemStack(Material.IRON_CHESTPLATE, 1), new ItemStack(Material.IRON_LEGGINGS, 1), new ItemStack(Material.IRON_BOOTS, 1) };
-	
-	public KitWarrior3()
-	{
+	ItemStack[] contents = new ItemStack[] {
+			new ItemStack(Material.DIAMOND_SWORD, 1),
+			new ItemStack(Material.COOKED_BEEF, 4),
+			new ItemStack(Material.IRON_HELMET),
+			new ItemStack(Material.IRON_CHESTPLATE, 1),
+			new ItemStack(Material.IRON_LEGGINGS, 1),
+			new ItemStack(Material.IRON_BOOTS, 1) };
+
+	public KitWarrior3() {
 		ItemStack bow = new ItemStack(Material.BOW);
 		bow.addEnchantment(Enchantment.ARROW_DAMAGE, 2);
 		bow.addEnchantment(Enchantment.ARROW_FIRE, 1);
 		bow.addEnchantment(Enchantment.ARROW_INFINITE, 1);
-		
-		contents = new ItemStack[]{ new ItemStack(Material.DIAMOND_SWORD, 1), new ItemStack(Material.COOKED_BEEF, 4), new ItemStack(Material.IRON_HELMET), new ItemStack(Material.IRON_CHESTPLATE, 1), new ItemStack(Material.IRON_LEGGINGS, 1), new ItemStack(Material.IRON_BOOTS, 1), bow, new ItemStack(Material.ARROW, 1) };
+
+		contents = new ItemStack[] { new ItemStack(Material.DIAMOND_SWORD, 1),
+				new ItemStack(Material.COOKED_BEEF, 4),
+				new ItemStack(Material.IRON_HELMET),
+				new ItemStack(Material.IRON_CHESTPLATE, 1),
+				new ItemStack(Material.IRON_LEGGINGS, 1),
+				new ItemStack(Material.IRON_BOOTS, 1), bow,
+				new ItemStack(Material.ARROW, 1) };
 	}
-	
+
 	@Override
 	public ItemStack[] getItemStack() {
 		return contents;
 	}
 
 	@Override
-	public int getRequiredPriority() {
-		return 300;
+	public int getCoinsToBuy() {
+		return 3000;
 	}
 
 }

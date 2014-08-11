@@ -30,32 +30,30 @@ import org.bukkit.inventory.ItemStack;
 import com.jkush321.autowalls.kit.Kit;
 import com.jkush321.autowalls.util.ItemUtils;
 
-
 public class KitExcavator extends Kit {
 
 	ItemStack[] contents;
-	
-	public KitExcavator()
-	{
+
+	public KitExcavator() {
 		ItemStack shovel = new ItemStack(Material.DIAMOND_SPADE, 1);
-		
+
 		shovel.addUnsafeEnchantment(Enchantment.DIG_SPEED, 5);
 		shovel = ItemUtils.setItemName(shovel, "The Digger");
-		
+
 		ItemStack hat = new ItemStack(Material.IRON_HELMET, 1);
 		ItemStack chest = new ItemStack(Material.LEATHER_CHESTPLATE, 1);
-		
-		contents = new ItemStack[]{ shovel, hat, chest };
+
+		contents = new ItemStack[] { shovel, hat, chest };
 	}
-	
+
 	@Override
 	public ItemStack[] getItemStack() {
 		return contents;
 	}
 
 	@Override
-	public int getRequiredPriority() {
-		return 5;
+	public int getCoinsToBuy() {
+		return 50;
 	}
 
 }

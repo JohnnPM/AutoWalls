@@ -32,36 +32,34 @@ import com.jkush321.autowalls.Grenades;
 import com.jkush321.autowalls.kit.Kit;
 import com.jkush321.autowalls.util.ItemUtils;
 
-
 public class KitEnder extends Kit {
 
 	ItemStack[] contents;
-	
-	public KitEnder()
-	{
+
+	public KitEnder() {
 		ItemStack teleporter = new ItemStack(Material.ENDER_PEARL, 2);
 		ItemUtils.setItemName(teleporter, ChatColor.GREEN + "Teleporter");
-		
+
 		ItemStack sword = new ItemStack(Material.IRON_SWORD, 1);
 		sword.addEnchantment(Enchantment.DAMAGE_ALL, 1);
-		
+
 		ItemStack grenade = Grenades.BASIC_GRENADE.clone();
 		grenade.setAmount(2);
-		
+
 		ItemStack chestplate = new ItemStack(Material.CHAINMAIL_CHESTPLATE, 1);
 		chestplate.addEnchantment(Enchantment.PROTECTION_FIRE, 2);
-		
-		contents = new ItemStack[]{ teleporter, sword, grenade, chestplate };
+
+		contents = new ItemStack[] { teleporter, sword, grenade, chestplate };
 	}
-	
+
 	@Override
 	public ItemStack[] getItemStack() {
 		return contents;
 	}
 
 	@Override
-	public int getRequiredPriority() {
-		return 60;
+	public int getCoinsToBuy() {
+		return 600;
 	}
 
 }

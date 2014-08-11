@@ -179,7 +179,8 @@ public class CommandFramework {
 		if (classes == null || classes.length == 0) {
 			return;
 		}
-		plugin.getLogger().log(Level.INFO, "Starting registration of commands:");
+		plugin.getLogger()
+				.log(Level.INFO, "Starting registration of commands:");
 		for (Class<?> c : classes) {
 			try {
 				if (CommandListener.class.isAssignableFrom(c)
@@ -205,7 +206,8 @@ public class CommandFramework {
 				e.printStackTrace();
 			}
 		}
-		plugin.getLogger().log(Level.INFO, "Finished registration of commands.");
+		plugin.getLogger()
+				.log(Level.INFO, "Finished registration of commands.");
 	}
 
 	/**
@@ -217,8 +219,10 @@ public class CommandFramework {
 		for (String s : commandMap.keySet()) {
 			if (!s.contains(".")) {
 				org.bukkit.command.Command cmd = map.getCommand(s);
-				HelpTopic topic = new GenericCommandHelpTopic(cmd);
-				help.add(topic);
+				if (cmd != null) {
+					HelpTopic topic = new GenericCommandHelpTopic(cmd);
+					help.add(topic);
+				}
 			}
 		}
 		IndexHelpTopic topic = new IndexHelpTopic(plugin.getName(),
@@ -675,7 +679,7 @@ public class CommandFramework {
 				return null;
 			}
 		}
-		
+
 		/**
 		 * Gets the final arguments after start int in string
 		 * 

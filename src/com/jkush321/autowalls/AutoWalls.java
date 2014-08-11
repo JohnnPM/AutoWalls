@@ -32,11 +32,7 @@ import java.util.logging.Logger;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
-import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.entity.ProjectileLaunchEvent;
-import org.bukkit.metadata.FixedMetadataValue;
-import org.bukkit.metadata.Metadatable;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import com.jkush321.autowalls.commands.CommandFramework;
@@ -46,6 +42,7 @@ import com.jkush321.autowalls.handlers.EventsHandler;
 import com.jkush321.autowalls.handlers.GameHandler;
 import com.jkush321.autowalls.handlers.GraveHandler;
 import com.jkush321.autowalls.handlers.KitHandler;
+import com.jkush321.autowalls.handlers.TabListHandler;
 import com.jkush321.autowalls.handlers.TeamHandler;
 import com.jkush321.autowalls.handlers.TeleportHandler;
 import com.jkush321.autowalls.handlers.VoteHandler;
@@ -103,18 +100,26 @@ public class AutoWalls extends JavaPlugin implements Listener {
 	private ChatHandler chatHandler;
 	public ChatHandler getChatHandler() 			{ return chatHandler; }
 	
+	private TabListHandler tabHandler;
+	public TabListHandler getTabHandler()			{ return tabHandler; }
+	
 	public String getPrefix() 						{ return ColorUtil.formatColors(this.getAWConfig().getString("AutoWalls Names.prefix")); }
 	
 	private CommandFramework framework;
 	
 	@Override
 	public void onLoad() {
-		plugin          = this;
+		plugin = this;
+	}
+
+	@Override
+	public void onEnable() {
+		if (plugin == null)
+			plugin = this;
+		
 		framework       = new CommandFramework(this);
 		handler         = new GameHandler();
 		teamHandler     = new TeamHandler();
-		announcer       = new Announcer();
-		kitHandler      = new KitHandler();
 		joinTimer       = new JoinTimer();
 		wallDropTimer   = new WallDropTimer();
 		graveHandler    = new GraveHandler();
@@ -122,20 +127,11 @@ public class AutoWalls extends JavaPlugin implements Listener {
 		eventsHandler   = new EventsHandler();
 		teleportHandler = new TeleportHandler();
 		wallDropThread  = new Thread(new WallDropTimer());
-		chatHandler     = new ChatHandler();
+		tabHandler      = new TabListHandler();
 		logger          = Logger.getLogger("AutoWalls");
-	}
-
-	@Override
-	public void onEnable() {
-		if (plugin == null)
-			plugin = this;
 
 		framework.registerCommands();
 		framework.registerHelp();
-
-		handler.registerEvents();
-		teamHandler.registerTeams();
 
 		File folder = getDataFolder();
 		if (!folder.exists()) folder.mkdir();
@@ -144,11 +140,20 @@ public class AutoWalls extends JavaPlugin implements Listener {
 		if (!configFile.exists()) this.saveResource("config.txt", false);
 		config = new Config(configFile);
 
+		teamHandler.setMaxTeamSize(plugin.getAWConfig().getint(
+					"AutoWalls Settings.maxTeamSize"));
+		 
+		chatHandler = new ChatHandler();
+		announcer = new Announcer();
+
+		handler.registerEvents();
+		teamHandler.registerTeams();
+					
 		// My CC3.0 Attribution license requires you to leave this in some way
 		// If you have forked it you can say...
 		// "This server runs MyFork by Me based on AutoWalls by Jkush321" or
 		// something similar
-		String[] announcements = config.getString("announcements").split(";");
+		String[] announcements = getAWConfig().getString("Announcer.announcements").split(";");
 		getAnnouncer().messages.add(
 				ColorUtil.formatString(
 						"<gray>Running AutoWalls v<aqua>%s on <aqua>%s <gray>by <aqua>%s<gray>."
@@ -189,6 +194,7 @@ public class AutoWalls extends JavaPlugin implements Listener {
 		}, 0L, 20L);
 
 		Grenades.init();
+		kitHandler = new KitHandler();
 
 		boolean tabAPI = getAWConfig().getboolean("AutoWalls Options.tabAPI");
 
@@ -224,17 +230,5 @@ public class AutoWalls extends JavaPlugin implements Listener {
 	public boolean onCommand(CommandSender sender, Command cmd, String label,
 			String[] args) {
 		 return framework.handleCommand(sender, label, cmd, args);
-	}
-
-	@EventHandler
-	public void onProjLaunch(ProjectileLaunchEvent e) {
-		if (((Metadatable) e.getEntity().getShooter())
-				.hasMetadata("last-grenade")) {
-			e.getEntity().setMetadata(
-					"grenade-type",
-					new FixedMetadataValue(this, ((Metadatable) e.getEntity()
-							.getShooter()).getMetadata("last-grenade").get(0)
-							.asString()));
-		}
 	}
 }

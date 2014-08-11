@@ -29,26 +29,24 @@ import org.bukkit.potion.PotionType;
 
 import com.jkush321.autowalls.kit.Kit;
 
-
 public class KitGhost extends Kit {
 
 	ItemStack[] contents;
-	
-	public KitGhost()
-	{
+
+	public KitGhost() {
 		Potion potion = new Potion(PotionType.INVISIBILITY);
 		potion.setSplash(true);
-		contents = new ItemStack[]{ potion.toItemStack(3) };
+		contents = new ItemStack[] { potion.toItemStack(3) };
 	}
-	
+
 	@Override
 	public ItemStack[] getItemStack() {
 		return contents;
 	}
 
 	@Override
-	public int getRequiredPriority() {
-		return 10;
+	public int getCoinsToBuy() {
+		return 100;
 	}
 
 }

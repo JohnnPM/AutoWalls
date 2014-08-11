@@ -15,6 +15,7 @@ import org.bukkit.event.inventory.InventoryOpenEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.plugin.Plugin;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
 
@@ -33,12 +34,13 @@ public class GUIUpdatingMenu implements Listener {
 
 	private HashMap<Integer, ItemStack> options = new HashMap<Integer, ItemStack>();
 
-	public GUIUpdatingMenu(String name, int size, Player player,
+	public GUIUpdatingMenu(Plugin plugin, String name, int size, Player player,
 			int delayUpdateInSeconds) {
 		this.name = name;
 		this.size = size;
 		this.player = player;
 		this.delay = delayUpdateInSeconds;
+		Bukkit.getPluginManager().registerEvents(this, plugin);
 	}
 
 	public GUIUpdatingMenu setItem(int postition, ItemStack stack, String name,

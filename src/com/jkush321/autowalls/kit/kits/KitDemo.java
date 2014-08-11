@@ -28,19 +28,20 @@ import org.bukkit.inventory.ItemStack;
 
 import com.jkush321.autowalls.kit.Kit;
 
-
 public class KitDemo extends Kit {
 
-	ItemStack[] contents = new ItemStack[]{ new ItemStack(Material.REDSTONE_TORCH_ON, 8), new ItemStack(Material.TNT, 6) };
-	
+	ItemStack[] contents = new ItemStack[] {
+			new ItemStack(Material.REDSTONE_TORCH_ON, 8),
+			new ItemStack(Material.TNT, 6) };
+
 	@Override
 	public ItemStack[] getItemStack() {
 		return contents;
 	}
 
 	@Override
-	public int getRequiredPriority() {
-		return 75;
+	public int getCoinsToBuy() {
+		return 750;
 	}
 
 }

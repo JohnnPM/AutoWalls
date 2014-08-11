@@ -30,37 +30,35 @@ import org.bukkit.inventory.ItemStack;
 import com.jkush321.autowalls.kit.Kit;
 import com.jkush321.autowalls.util.ItemUtils;
 
-
 public class KitFirefighter extends Kit {
 
 	ItemStack[] contents;
-	
-	public KitFirefighter()
-	{
+
+	public KitFirefighter() {
 		ItemStack helm = new ItemStack(Material.LEATHER_HELMET, 1);
 		helm = ItemUtils.dyeArmor(helm, 255, 255, 0);
-		
+
 		ItemStack chestPlate = new ItemStack(Material.LEATHER_CHESTPLATE, 1);
 		chestPlate = ItemUtils.dyeArmor(chestPlate, 255, 0, 0);
 		chestPlate.addEnchantment(Enchantment.PROTECTION_FIRE, 1);
-		
+
 		ItemStack sword = new ItemStack(Material.STONE_SWORD, 1);
-		
+
 		ItemStack bucket = new ItemStack(Material.WATER_BUCKET, 1);
-		
+
 		ItemStack ladders = new ItemStack(Material.LADDER, 25);
-		
-		contents = new ItemStack[]{ helm, chestPlate, sword, bucket, ladders };
+
+		contents = new ItemStack[] { helm, chestPlate, sword, bucket, ladders };
 	}
-	
+
 	@Override
 	public ItemStack[] getItemStack() {
 		return contents;
 	}
 
 	@Override
-	public int getRequiredPriority() {
-		return 35;
+	public int getCoinsToBuy() {
+		return 350;
 	}
 
 }

@@ -71,11 +71,14 @@ public class DeathHandler implements Listener {
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
+		if (plugin.getHandler().tabAPI)
+			plugin.getTabHandler().updateTabAll();
 	}
 
 	@EventHandler
 	public void onRespawn(PlayerRespawnEvent e) {
 		if (handler.isGameInProgress())
 			handler.spectate(e.getPlayer());
-	}
+		if (plugin.getHandler().tabAPI)
+			plugin.getTabHandler().updateTabAll();	}
 }

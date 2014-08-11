@@ -28,41 +28,49 @@ import org.bukkit.inventory.ItemStack;
 
 import com.jkush321.autowalls.kit.Kit;
 
-
 public class KitElite2 extends Kit {
 
-	ItemStack[] contents = new ItemStack[]{ new ItemStack(Material.DIAMOND_SWORD, 1), new ItemStack(Material.COOKED_BEEF, 12), new ItemStack(Material.DIAMOND_HELMET, 1), new ItemStack(Material.DIAMOND_CHESTPLATE, 1), new ItemStack(Material.CHAINMAIL_LEGGINGS, 1), new ItemStack(Material.GOLD_BOOTS, 1), new ItemStack(Material.GOLDEN_APPLE, 2), new ItemStack(Material.IRON_PICKAXE, 1), new ItemStack(Material.EXP_BOTTLE, 16) };
-	
-	public KitElite2()
-	{
+	ItemStack[] contents = new ItemStack[] {
+			new ItemStack(Material.DIAMOND_SWORD, 1),
+			new ItemStack(Material.COOKED_BEEF, 12),
+			new ItemStack(Material.DIAMOND_HELMET, 1),
+			new ItemStack(Material.DIAMOND_CHESTPLATE, 1),
+			new ItemStack(Material.CHAINMAIL_LEGGINGS, 1),
+			new ItemStack(Material.GOLD_BOOTS, 1),
+			new ItemStack(Material.GOLDEN_APPLE, 2),
+			new ItemStack(Material.IRON_PICKAXE, 1),
+			new ItemStack(Material.EXP_BOTTLE, 16) };
+
+	public KitElite2() {
 		ItemStack boots = new ItemStack(Material.DIAMOND_BOOTS);
 		ItemStack legs = new ItemStack(Material.DIAMOND_LEGGINGS);
 		ItemStack chest = new ItemStack(Material.DIAMOND_CHESTPLATE);
 		ItemStack helm = new ItemStack(Material.DIAMOND_HELMET);
-		
+
 		ItemStack sword = new ItemStack(Material.DIAMOND_SWORD);
 		ItemStack pickaxe = new ItemStack(Material.DIAMOND_PICKAXE);
 		ItemStack axe = new ItemStack(Material.DIAMOND_AXE);
-		
+
 		ItemStack exp = new ItemStack(Material.EXP_BOTTLE, 64);
 		ItemStack bookshelves = new ItemStack(Material.BOOKSHELF, 16);
 		ItemStack anvil = new ItemStack(Material.ANVIL);
-		
+
 		ItemStack flintAndSteel = new ItemStack(Material.FLINT_AND_STEEL);
-		
+
 		ItemStack coal = new ItemStack(Material.COAL, 16);
-		
-		contents = new ItemStack[]{ sword, pickaxe, axe, helm, chest, legs, boots, exp, bookshelves, anvil, flintAndSteel, coal };
+
+		contents = new ItemStack[] { sword, pickaxe, axe, helm, chest, legs,
+				boots, exp, bookshelves, anvil, flintAndSteel, coal };
 	}
-	
+
 	@Override
 	public ItemStack[] getItemStack() {
 		return contents;
 	}
 
 	@Override
-	public int getRequiredPriority() {
-		return 450;
+	public int getCoinsToBuy() {
+		return 4500;
 	}
 
 }

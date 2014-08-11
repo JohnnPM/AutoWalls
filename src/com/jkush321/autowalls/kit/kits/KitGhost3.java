@@ -31,30 +31,28 @@ import org.bukkit.potion.PotionType;
 
 import com.jkush321.autowalls.kit.Kit;
 
-
 public class KitGhost3 extends Kit {
 
 	ItemStack[] contents;
-	
-	public KitGhost3()
-	{
+
+	public KitGhost3() {
 		Potion potion = new Potion(PotionType.INVISIBILITY);
 		potion.setSplash(true);
 		potion.setHasExtendedDuration(true);
 		ItemStack sword = new ItemStack(Material.DIAMOND_SWORD, 1);
 		sword.addEnchantment(Enchantment.DAMAGE_ALL, 1);
 		ItemStack flintNSteel = new ItemStack(Material.FLINT_AND_STEEL);
-		contents = new ItemStack[]{ potion.toItemStack(5), sword, flintNSteel };
+		contents = new ItemStack[] { potion.toItemStack(5), sword, flintNSteel };
 	}
-	
+
 	@Override
 	public ItemStack[] getItemStack() {
 		return contents;
 	}
 
 	@Override
-	public int getRequiredPriority() {
-		return 90;
+	public int getCoinsToBuy() {
+		return 900;
 	}
 
 }

@@ -124,5 +124,7 @@ public class PlayerHandler implements Listener {
 			plugin.getTeamHandler().removePlayerFromTeam(player);
 		if (plugin.getEventsHandler().getLastEvent(player) != 0)
 			plugin.getEventsHandler().lastEvent.remove(player);
+		if (plugin.getHandler().tabAPI)
+			plugin.getTabHandler().updateTabAll();
 	}
 }

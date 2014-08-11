@@ -53,7 +53,7 @@ public class KitCommand implements CommandListener {
 							kitsUnlocked = plugin.getHandler()
 									.getPlayerConfig(info.getPlayer())
 									.getStringList("player.unlocked.kits");
-						if (kitsUnlocked.contains(k)) {
+						if (kitsUnlocked.contains(k.getName())) {
 							plugin.getKitHandler().setKit(info.getPlayer(), k);
 							info.getSender()
 									.sendMessage(

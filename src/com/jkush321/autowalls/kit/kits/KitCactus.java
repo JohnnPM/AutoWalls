@@ -29,13 +29,11 @@ import org.bukkit.inventory.ItemStack;
 
 import com.jkush321.autowalls.kit.Kit;
 
-
 public class KitCactus extends Kit {
 
 	ItemStack[] contents;
-	
-	public KitCactus()
-	{
+
+	public KitCactus() {
 		ItemStack boots = new ItemStack(Material.LEATHER_BOOTS, 1);
 		ItemStack legs = new ItemStack(Material.LEATHER_LEGGINGS, 1);
 		ItemStack chest = new ItemStack(Material.LEATHER_CHESTPLATE, 1);
@@ -44,17 +42,17 @@ public class KitCactus extends Kit {
 		legs.addEnchantment(Enchantment.THORNS, 1);
 		chest.addEnchantment(Enchantment.THORNS, 1);
 		helm.addEnchantment(Enchantment.THORNS, 1);
-		contents = new ItemStack[]{ boots, legs, chest, helm };
+		contents = new ItemStack[] { boots, legs, chest, helm };
 	}
-	
+
 	@Override
 	public ItemStack[] getItemStack() {
 		return contents;
 	}
 
 	@Override
-	public int getRequiredPriority() {
-		return 15;
+	public int getCoinsToBuy() {
+		return 150;
 	}
 
 }

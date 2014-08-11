@@ -8,13 +8,17 @@
 package com.jkush321.autowalls.handlers;
 
 import java.util.ArrayList;
+import java.util.logging.Level;
 
+import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 
 import com.jkush321.autowalls.AutoWalls;
+import com.jkush321.autowalls.config.Config;
 import com.jkush321.autowalls.team.Team;
 
 /**
@@ -37,25 +41,99 @@ public class ChatHandler implements Listener {
 
 	private AutoWalls plugin = AutoWalls.get();
 	private TeamHandler teamHandler = plugin.getTeamHandler();
+	private Config config = plugin.getAWConfig();
 
 	public ArrayList<Player> teamChatting = new ArrayList<Player>();
 	public ArrayList<Player> specChatting = new ArrayList<Player>();
 	public ArrayList<Player> globalChatting = new ArrayList<Player>();
 
-	public void chatTeam(Player player, String message, Team team) {
+	public String teamChatFormat = config.getString("Chat.team");
 
+	public void chatTeam(Player player, String message, Team team) {
+		for (Player p : team.getPlayers()) {
+			p.sendMessage(teamChatFormat
+					.replaceAll("%teamcolor%", team.getColor().toString())
+					.replaceAll("%team%", team.getName())
+					.replaceAll("%player%", player.getDisplayName())
+					.replaceAll("%message%", message.trim()));
+		}
+		plugin.getAWLogger().log(
+				Level.INFO,
+				ChatColor.stripColor(teamChatFormat
+						.replaceAll("%teamcolor%", team.getColor().toString())
+						.replaceAll("%team%", team.getName())
+						.replaceAll("%player%", player.getDisplayName())
+						.replaceAll("%message%", message.trim())));
 	}
+
+	public String specChatFormat = config.getString("Chat.spectator");
 
 	public void chatSpec(Player player, String message) {
-
+		for (Player p : plugin.getHandler().spectators) {
+			p.sendMessage(specChatFormat
+					.replaceAll(
+							"%kills%",
+							""
+									+ plugin.getAWConfig().getint(
+											"player.stats.kills"))
+					.replaceAll("%player%", player.getDisplayName())
+					.replaceAll("%message%", message.trim()));
+		}
+		plugin.getAWLogger().log(
+				Level.INFO,
+				ChatColor.stripColor(specChatFormat
+						.replaceAll(
+								"%kills%",
+								""
+										+ plugin.getAWConfig().getint(
+												"player.stats.kills"))
+						.replaceAll("%player%", player.getDisplayName())
+						.replaceAll("%message%", message.trim())));
 	}
+
+	public String globalChatFormat = config.getString("Chat.global");
 
 	public void chatGlobal(Player player, String message) {
-
+		for (Player p : Bukkit.getOnlinePlayers()) {
+			p.sendMessage(globalChatFormat
+					.replaceAll(
+							"%kills%",
+							""
+									+ plugin.getAWConfig().getint(
+											"player.stats.kills"))
+					.replaceAll("%player%", player.getDisplayName())
+					.replaceAll("%message%", message.trim()));
+		}
+		plugin.getAWLogger().log(
+				Level.INFO,
+				ChatColor.stripColor(globalChatFormat
+						.replaceAll(
+								"%kills%",
+								""
+										+ plugin.getAWConfig().getint(
+												"player.stats.kills"))
+						.replaceAll("%player%", player.getDisplayName())
+						.replaceAll("%message%", message.trim())));
 	}
-	
+
+	public String yellChatFormat = config.getString("Chat.yell");
+
 	public void yell(Player player, String message) {
-		
+		ChatColor color = ChatColor.GRAY;
+		if (plugin.getHandler().playing.contains(player))
+			color = teamHandler.getPlayerTeam(player).getColor();
+		for (Player p : Bukkit.getOnlinePlayers()) {
+			p.sendMessage(yellChatFormat
+					.replaceAll("%color%", color.toString())
+					.replaceAll("%player%", player.getDisplayName())
+					.replaceAll("%message%", message.trim()));
+		}
+		plugin.getAWLogger().log(
+				Level.INFO,
+				ChatColor.stripColor(yellChatFormat
+						.replaceAll("%color%", color.toString())
+						.replaceAll("%player%", player.getDisplayName())
+						.replaceAll("%message%", message.trim())));
 	}
 
 	@EventHandler
@@ -66,10 +144,8 @@ public class ChatHandler implements Listener {
 					teamHandler.getPlayerTeam(player));
 		} else if (specChatting.contains(player)) {
 			chatSpec(player, event.getMessage());
-		} else if (globalChatting.contains(player)) {
-			chatGlobal(player, event.getMessage());
 		} else {
-			event.setCancelled(false);
+			chatGlobal(player, event.getMessage());
 		}
 	}
 }

@@ -33,30 +33,33 @@ import com.jkush321.autowalls.ColorCycler;
 import com.jkush321.autowalls.kit.Kit;
 import com.jkush321.autowalls.util.ItemUtils;
 
-
 public class KitSpy extends Kit {
 
 	ItemStack[] contents;
-	
-	public KitSpy()
-	{
+
+	public KitSpy() {
 		Potion potion = new Potion(PotionType.INVISIBILITY);
-		
+
 		ItemStack colorCycler = new ItemStack(Material.NETHER_STAR);
-		colorCycler = ItemUtils.setItemName(colorCycler, ChatColor.GREEN + "Color Cycler");
-		colorCycler = ItemUtils.setLore(colorCycler, ChatColor.YELLOW + "Cycle through the nameplate colors", ChatColor.YELLOW + "by right clicking and look like", ChatColor.YELLOW + "whatever team you desire!", ChatColor.RED + "You have " + ColorCycler.MAX_COLOR_TIME + " secs total disguise time!");
-		
-		contents = new ItemStack[]{ potion.toItemStack(2), colorCycler };
+		colorCycler = ItemUtils.setItemName(colorCycler, ChatColor.GREEN
+				+ "Color Cycler");
+		colorCycler = ItemUtils.setLore(colorCycler, ChatColor.YELLOW
+				+ "Cycle through the nameplate colors", ChatColor.YELLOW
+				+ "by right clicking and look like", ChatColor.YELLOW
+				+ "whatever team you desire!", ChatColor.RED + "You have "
+				+ ColorCycler.MAX_COLOR_TIME + " secs total disguise time!");
+
+		contents = new ItemStack[] { potion.toItemStack(2), colorCycler };
 	}
-	
+
 	@Override
 	public ItemStack[] getItemStack() {
 		return contents;
 	}
 
 	@Override
-	public int getRequiredPriority() {
-		return 150;
+	public int getCoinsToBuy() {
+		return 1500;
 	}
 
 }

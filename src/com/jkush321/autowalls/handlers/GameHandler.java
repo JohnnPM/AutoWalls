@@ -74,11 +74,15 @@ public class GameHandler implements Listener {
 	public void addDeadPlayer(Player player) {
 		if (!dead.contains(player))
 			dead.add(player);
+		if (plugin.getHandler().tabAPI)
+			plugin.getTabHandler().updateTabAll();
 	}
 
 	public void removeDeadPlayer(Player player) {
 		if (dead.contains(player))
 			dead.remove(player);
+		if (plugin.getHandler().tabAPI)
+			plugin.getTabHandler().updateTabAll();
 	}
 
 	public File getPlayerFile(Player player) {
@@ -93,7 +97,7 @@ public class GameHandler implements Listener {
 		}
 	}
 
-	public void createPlayerFile(Player player) {
+	public File createPlayerFile(Player player) {
 		File file = new File(plugin.getDataFolder()
 				+ References.PLAYER_FILE_EXT, player.getUniqueId()
 				+ References.PLAYER_FILE_FORMAT);
@@ -104,6 +108,7 @@ public class GameHandler implements Listener {
 				e.printStackTrace();
 			}
 		}
+		return file;
 	}
 
 	public FileConfiguration getPlayerConfig(Player player) {
@@ -209,8 +214,8 @@ public class GameHandler implements Listener {
 				plugin.getLogger().log(
 						Level.INFO,
 						c.getSimpleName()
-								+ " does not use the default constructor");
-				e.printStackTrace();
+								+ " does not use the default constructor. Ignoring.");
+				//e.printStackTrace();
 			}
 		}
 		plugin.getLogger().log(Level.INFO, "Finished registration of events.");
@@ -294,6 +299,8 @@ public class GameHandler implements Listener {
 				spectate(p);
 			}
 		}
+		if (plugin.getHandler().tabAPI)
+			plugin.getTabHandler().updateTabAll();
 	}
 
 	public void spectate(Player p) {
@@ -308,6 +315,8 @@ public class GameHandler implements Listener {
 		}
 		p.addPotionEffect(new PotionEffect(PotionEffectType.INVISIBILITY,
 				10000, 1, true));
+		if (plugin.getHandler().tabAPI)
+			plugin.getTabHandler().updateTabAll();
 	}
 
 	public void endGame(TeamList team, String players) {
@@ -341,6 +350,8 @@ public class GameHandler implements Listener {
 
 		}, 20);
 
+		if (plugin.getHandler().tabAPI)
+			plugin.getTabHandler().updateTabAll();
 		Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
 
 			@Override
@@ -349,6 +360,7 @@ public class GameHandler implements Listener {
 			}
 
 		}, 31 * 20);
+
 	}
 
 	public void joinTeam(Player p, TeamList team) {
@@ -436,6 +448,9 @@ public class GameHandler implements Listener {
 			p.setExp(0);
 			p.setLevel(0);
 			p.setNoDamageTicks(60);
+
+			if (plugin.getHandler().tabAPI)
+				plugin.getTabHandler().updateTabAll();
 		}
 	}
 
@@ -453,6 +468,8 @@ public class GameHandler implements Listener {
 		}
 		Bukkit.broadcastMessage(ColorUtil.formatString(
 				"<aqua>%s <gold>has left the game!", p.getDisplayName()));
+		if (plugin.getHandler().tabAPI)
+			plugin.getTabHandler().updateTabAll();
 		checkStats();
 	}
 
@@ -497,5 +514,7 @@ public class GameHandler implements Listener {
 			s = s.substring(0, s.length() - 4);
 			endGame(TeamList.YELLOW, s);
 		}
+		if (plugin.getHandler().tabAPI)
+			plugin.getTabHandler().updateTabAll();
 	}
 }
