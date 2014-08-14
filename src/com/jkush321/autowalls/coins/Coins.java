@@ -7,6 +7,11 @@
  */
 package com.jkush321.autowalls.coins;
 
+import org.bukkit.entity.Player;
+
+import com.jkush321.autowalls.AutoWalls;
+import com.jkush321.autowalls.handlers.GameHandler;
+
 /**
  * Created: Aug 10, 2014 <br>
  * Time: 12:41:14 PM <br>
@@ -21,5 +26,12 @@ package com.jkush321.autowalls.coins;
  * @author 598Johnn897
  */
 public class Coins {
+	
+	private AutoWalls plugin = AutoWalls.get();
+	private GameHandler handler = plugin.getHandler();
+	
+	public int getPlayerCoins(Player player) {
+		return 0;
+	}
 
 }

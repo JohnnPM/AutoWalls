@@ -7,11 +7,13 @@
  */
 package com.jkush321.autowalls.handlers;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.HashMap;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -52,26 +54,38 @@ public class PlayerHandler implements Listener {
 		Player player = event.getPlayer();
 		if (!player.hasPlayedBefore()) {
 			handler.createPlayerFile(player);
-			FileConfiguration playerFile = handler.getPlayerConfig(player);
 			HashMap<String, Object> defaults = new HashMap<String, Object>();
-			{
-				defaults.put("player.username", player.getName());
-				defaults.put("player.nickname", player.getDisplayName());
 
-				defaults.put("player.unlocked.kits", new String[] { "" });
-				defaults.put("player.unlocked.powers", new String[] { "" });
-				defaults.put("player.unlocked.cosmetics", new String[] { "" });
-				defaults.put("player.unlocked.perks", new String[] { "" });
+			defaults.put("player.username", player.getName());
+			defaults.put("player.nickname", player.getDisplayName());
 
-				defaults.put("player.stats.logins", 1);
+			defaults.put("player.unlocked.kits", new String[] { "" });
+			defaults.put("player.unlocked.powers", new String[] { "" });
+			defaults.put("player.unlocked.cosmetics", new String[] { "" });
+			defaults.put("player.unlocked.perks", new String[] { "" });
 
-				defaults.put("player.stats.kills", 0);
-				defaults.put("player.stats.coins", 0);
-				defaults.put("player.stats.wins", 0);
-			}
+			defaults.put("player.stats.logins", 1);
+
+			defaults.put("player.stats.kills", 0);
+			defaults.put("player.stats.coins", 0);
+			defaults.put("player.stats.wins", 0);
+
+			YamlConfiguration playerFile = YamlConfiguration
+					.loadConfiguration(handler.getPlayerFile(player));
+
 			playerFile.addDefaults(defaults);
 			playerFile.options().copyDefaults(true);
 			handler.savePlayerConfig(player);
+			saveCustomYml(playerFile, handler.getPlayerFile(player));
+
+		}
+	}
+
+	public void saveCustomYml(YamlConfiguration ymlConfig, File ymlFile) {
+		try {
+			ymlConfig.save(ymlFile);
+		} catch (IOException e) {
+			e.printStackTrace();
 		}
 	}
 

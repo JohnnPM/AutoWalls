@@ -39,28 +39,25 @@ public class JoinTimer extends BukkitRunnable {
 
 	@Override
 	public void run() {
-		while (timeLeft > 0) {
-			try {
-				timeLeft--;
+		try {
+			timeLeft--;
 
-				if ((timeLeft >= 10 && timeLeft % 10 == 0)
-						|| (timeLeft <= 5 && timeLeft > 0)) {
-					Bukkit.broadcastMessage(ColorUtil
-							.formatString(
-									"%s: <gray>You can join in <aqua>%02d <gray>seconds!",
-									plugin.getPrefix(), timeLeft));
-				} else if (timeLeft == 1) {
-					Bukkit.broadcastMessage(ColorUtil
-							.formatString(
-									"%s: <white>You can now <aqua>join<white>! <dark_gray>(<gray>/join<dark_gray>)",
-									plugin.getPrefix()));
-					plugin.getHandler().canJoin = true;
-				}
-			} catch (Exception e) {
-				plugin.getAWLogger().log(Level.SEVERE, "Join timer error:");
-				e.printStackTrace();
-				this.cancel();
+			if ((timeLeft >= 10 && timeLeft % 10 == 0)
+					|| (timeLeft <= 5 && timeLeft > 0)) {
+				Bukkit.broadcastMessage(ColorUtil.formatString(
+						"%s: <gray>You can join in <aqua>%d <gray>seconds!",
+						plugin.getPrefix(), timeLeft));
+			} else if (timeLeft == 0) {
+				Bukkit.broadcastMessage(ColorUtil
+						.formatString(
+								"%s: <white>You can now <aqua>join<white>! <dark_gray>(<gray>/join<dark_gray>)",
+								plugin.getPrefix()));
+				plugin.getHandler().canJoin = true;
 			}
+		} catch (Exception e) {
+			plugin.getAWLogger().log(Level.SEVERE, "Join timer error:");
+			e.printStackTrace();
+			this.cancel();
 		}
 	}
 

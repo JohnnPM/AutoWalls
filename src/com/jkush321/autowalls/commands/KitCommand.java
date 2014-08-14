@@ -53,13 +53,12 @@ public class KitCommand implements CommandListener {
 							kitsUnlocked = plugin.getHandler()
 									.getPlayerConfig(info.getPlayer())
 									.getStringList("player.unlocked.kits");
-						if (kitsUnlocked.contains(k.getName())) {
+						if (kitsUnlocked.contains(k.getName()) || k.isDefault()) {
 							plugin.getKitHandler().setKit(info.getPlayer(), k);
-							info.getSender()
-									.sendMessage(
-											ColorUtil.formatString(
-													"%s: <gold>Selected ",
-													k.getName()));
+							info.getSender().sendMessage(
+									ColorUtil.formatString(
+											"%s: <gold>Selected Kit: ",
+											k.getName()));
 						} else {
 							info.getSender()
 									.sendMessage(

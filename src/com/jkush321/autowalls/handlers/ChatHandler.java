@@ -20,6 +20,7 @@ import org.bukkit.event.player.AsyncPlayerChatEvent;
 import com.jkush321.autowalls.AutoWalls;
 import com.jkush321.autowalls.config.Config;
 import com.jkush321.autowalls.team.Team;
+import com.jkush321.autowalls.util.ColorUtil;
 
 /**
  * Created: Aug 3, 2014 <br>
@@ -47,7 +48,7 @@ public class ChatHandler implements Listener {
 	public ArrayList<Player> specChatting = new ArrayList<Player>();
 	public ArrayList<Player> globalChatting = new ArrayList<Player>();
 
-	public String teamChatFormat = config.getString("Chat.team");
+	public String teamChatFormat = ColorUtil.formatColors(config.getString("Chat.team"));
 
 	public void chatTeam(Player player, String message, Team team) {
 		for (Player p : team.getPlayers()) {
@@ -66,7 +67,7 @@ public class ChatHandler implements Listener {
 						.replaceAll("%message%", message.trim())));
 	}
 
-	public String specChatFormat = config.getString("Chat.spectator");
+	public String specChatFormat = ColorUtil.formatColors(config.getString("Chat.spectator"));
 
 	public void chatSpec(Player player, String message) {
 		for (Player p : plugin.getHandler().spectators) {
@@ -91,7 +92,7 @@ public class ChatHandler implements Listener {
 						.replaceAll("%message%", message.trim())));
 	}
 
-	public String globalChatFormat = config.getString("Chat.global");
+	public String globalChatFormat = ColorUtil.formatColors(config.getString("Chat.global"));
 
 	public void chatGlobal(Player player, String message) {
 		for (Player p : Bukkit.getOnlinePlayers()) {
@@ -116,7 +117,7 @@ public class ChatHandler implements Listener {
 						.replaceAll("%message%", message.trim())));
 	}
 
-	public String yellChatFormat = config.getString("Chat.yell");
+	public String yellChatFormat = ColorUtil.formatColors(config.getString("Chat.yell"));
 
 	public void yell(Player player, String message) {
 		ChatColor color = ChatColor.GRAY;
@@ -138,6 +139,7 @@ public class ChatHandler implements Listener {
 
 	@EventHandler
 	public void onChat(AsyncPlayerChatEvent event) {
+		event.setCancelled(true);
 		Player player = event.getPlayer();
 		if (teamChatting.contains(player)) {
 			chatTeam(player, event.getMessage(),

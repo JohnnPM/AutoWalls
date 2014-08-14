@@ -21,8 +21,6 @@ import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.configuration.InvalidConfigurationException;
-import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
@@ -98,9 +96,14 @@ public class GameHandler implements Listener {
 	}
 
 	public File createPlayerFile(Player player) {
+		File dir = new File(plugin.getDataFolder()
+				+ References.PLAYER_FILE_EXT);
 		File file = new File(plugin.getDataFolder()
 				+ References.PLAYER_FILE_EXT, player.getUniqueId()
 				+ References.PLAYER_FILE_FORMAT);
+		if (!dir.exists()) {
+			dir.mkdir();
+		}
 		if (!file.exists()) {
 			try {
 				file.createNewFile();
@@ -111,17 +114,12 @@ public class GameHandler implements Listener {
 		return file;
 	}
 
-	public FileConfiguration getPlayerConfig(Player player) {
-		FileConfiguration file = null;
+	public YamlConfiguration getPlayerConfig(Player player) {
 		File pFile = getPlayerFile(player);
 		try {
-			file = new YamlConfiguration();
-			try {
-				file.load(pFile);
-			} catch (IOException | InvalidConfigurationException e) {
-				e.printStackTrace();
-			}
-			return file;
+			YamlConfiguration defConfig = YamlConfiguration
+					.loadConfiguration(pFile);
+			return defConfig;
 		} catch (NullPointerException e) {
 			return null;
 		}
@@ -211,11 +209,11 @@ public class GameHandler implements Listener {
 					}
 				}
 			} catch (IllegalAccessException | InstantiationException e) {
-				plugin.getLogger().log(
-						Level.INFO,
-						c.getSimpleName()
-								+ " does not use the default constructor. Ignoring.");
-				//e.printStackTrace();
+				plugin.getLogger()
+						.log(Level.INFO,
+								c.getSimpleName()
+										+ " does not use the default constructor. Ignoring.");
+				// e.printStackTrace();
 			}
 		}
 		plugin.getLogger().log(Level.INFO, "Finished registration of events.");

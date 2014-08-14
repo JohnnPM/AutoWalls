@@ -31,7 +31,7 @@ public class TagUtil {
 
 	/**
 	 * This sets a player's prefix on his/her nameplate. This creates a team for
-	 * the player using the player's UUID for the team name then adds the player
+	 * the player using the player's username for the team name then adds the player
 	 * to the team and sets the defined prefix. The prefix supports color codes
 	 * but can also use a string defined color.
 	 * <p>
@@ -65,10 +65,10 @@ public class TagUtil {
 	 */
 	public static void setTagPrefix(Player player, String prefix) {
 		Team team = player.getScoreboard().getTeam(
-				player.getUniqueId().toString());
+				player.getName().toString());
 		if (team == null)
 			team = player.getScoreboard().registerNewTeam(
-					player.getUniqueId().toString());
+					player.getName().toString());
 
 		if (prefix != null)
 			team.setPrefix(ChatColor.translateAlternateColorCodes(
@@ -103,9 +103,9 @@ public class TagUtil {
 	 */
 	public static void removeTagPrefix(Player player) {
 		Team team = player.getScoreboard().getTeam(
-				player.getUniqueId().toString());
+				player.getName().toString());
 		if (team != null) {
-			team.setPrefix(null);
+			team.setPrefix("");
 		}
 	}
 
@@ -146,10 +146,10 @@ public class TagUtil {
 	 */
 	public static void setTagSuffix(Player player, String suffix) {
 		Team team = player.getScoreboard().getTeam(
-				player.getUniqueId().toString());
+				player.getName().toString());
 		if (team == null)
 			team = player.getScoreboard().registerNewTeam(
-					player.getUniqueId().toString());
+					player.getName().toString());
 
 		if (suffix != null)
 			team.setSuffix(ChatColor.translateAlternateColorCodes(
@@ -184,9 +184,9 @@ public class TagUtil {
 	 */
 	public static void removeTagSuffix(Player player) {
 		Team team = player.getScoreboard().getTeam(
-				player.getUniqueId().toString());
+				player.getName().toString());
 		if (team != null) {
-			team.setSuffix(null);
+			team.setSuffix("");
 		}
 	}
 
@@ -213,7 +213,7 @@ public class TagUtil {
 	 */
 	public static void removeAllTags(Player player) {
 		Team team = player.getScoreboard().getTeam(
-				player.getUniqueId().toString());
+				player.getName().toString());
 		if (team != null) {
 			team.removePlayer(player);
 			team.unregister();

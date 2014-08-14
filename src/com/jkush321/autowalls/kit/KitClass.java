@@ -129,6 +129,13 @@ public enum KitClass {
 	}
 	
 	/**
+	 * @return the amount of coins to buy it
+	 */
+	public int getCoinsToBuy() {
+		return getKit().getCoinsToBuy();
+	}
+	
+	/**
 	 * @param displayName the displayName to set
 	 */
 	public void setDisplayName(String displayName) {

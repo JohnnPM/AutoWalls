@@ -10,6 +10,7 @@ package com.jkush321.autowalls.handlers;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
+import org.apache.commons.lang.Validate;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -55,8 +56,11 @@ public class KitSelectHandler implements Listener {
 		if (handler.isGameInProgress())
 			return;
 		if (event.getAction().equals(Action.RIGHT_CLICK_AIR)
-				|| event.getAction().equals(Action.RIGHT_CLICK_BLOCK)) {
-			if (event.getItem().equals(new ItemStack(Material.IRON_AXE))) {
+				|| event.getAction().equals(Action.RIGHT_CLICK_BLOCK)
+				|| event.getAction().equals(Action.LEFT_CLICK_AIR)
+				|| event.getAction().equals(Action.LEFT_CLICK_BLOCK)) {
+			if (event.getItem() != null
+					&& event.getItem().equals(new ItemStack(Material.IRON_AXE))) {
 				List<String> kits = null;
 				if (plugin.getHandler().getPlayerConfig(event.getPlayer())
 						.isSet("player.unlocked.kits"))
@@ -68,6 +72,7 @@ public class KitSelectHandler implements Listener {
 				List<String> locked = new CopyOnWriteArrayList<String>();
 
 				for (int i = 0; i < plugin.getKitHandler().kitList.size(); i++) {
+					Validate.notNull(kits);
 					if (kits.contains(plugin.getKitHandler().kitList.get(i)
 							.getName())
 							|| plugin.getKitHandler().kitList.get(i)

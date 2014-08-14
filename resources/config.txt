@@ -132,7 +132,7 @@ win : 100
 kill : 10
 
 ==== Shop ====
-
+# A Shop To Buy Perks, Cosmetics, or Kits (Not implemented Yet)
 # Villager Shop?
 villager : true
 

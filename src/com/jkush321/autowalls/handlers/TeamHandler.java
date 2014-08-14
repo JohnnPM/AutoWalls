@@ -123,8 +123,8 @@ public class TeamHandler {
 		}
 	}
 
-	public ArrayList<Player> getPlayersOnTeam(TeamList red) {
-		return red.getTeam().getPlayers();
+	public ArrayList<Player> getPlayersOnTeam(TeamList team) {
+		return team.getTeam().getPlayers();
 	}
 
 	public ArrayList<Player> getPlayersOnTeams() {

@@ -52,8 +52,9 @@ public class GraveHandler implements Listener {
 	@EventHandler
 	public void onPlayerDeath(PlayerDeathEvent event) {
 		if (plugin.getHandler().playing.contains((Player) event.getEntity())) {
-			createGrave(event.getEntity().getLocation(),
-					((Player) event.getEntity()).getDisplayName());
+			if (plugin.getHandler().isGameInProgress())
+				createGrave(event.getEntity().getLocation(),
+						((Player) event.getEntity()).getDisplayName());
 		}
 	}
 
